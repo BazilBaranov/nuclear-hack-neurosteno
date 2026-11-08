@@ -1,6 +1,11 @@
 # APK для установки
 
-[Скачать neurosteno-arm64.apk](neurosteno-arm64.apk)
+[Скачать neurosteno-arm64.apk](https://github.com/BazilBaranov/nuclear-hack-neurosteno/releases/download/v0.1.0/neurosteno-arm64.apk)
+
+APK хранится в **Releases**, отдельно от исходников. Здесь сохранены описание
+сборки и контрольная сумма. Скачайте APK и
+[SHA256SUMS.txt](https://github.com/BazilBaranov/nuclear-hack-neurosteno/releases/download/v0.1.0/SHA256SUMS.txt)
+в одну папку перед выполнением команд ниже.
 
 - Android 9+ / API 28, ARM64 (`arm64-v8a`).
 - Пакет `dev.neurostenografist.ultra`, версия `0.1.0-ultra-optimized`.

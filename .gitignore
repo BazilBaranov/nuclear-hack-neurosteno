@@ -31,6 +31,3 @@ captures/
 tests/.scratch/
 *.log
 __pycache__/
-
-# Deliberate hackathon deliverables
-!artifacts/apk/*.apk

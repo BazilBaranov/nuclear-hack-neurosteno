@@ -3,7 +3,7 @@
 </p>
 
 <p align="center">
-  <strong><a href="artifacts/apk/neurosteno-arm64.apk">Скачать APK</a></strong> ·
+  <strong><a href="https://github.com/BazilBaranov/nuclear-hack-neurosteno/releases/download/v0.1.0/neurosteno-arm64.apk">Скачать APK</a></strong> ·
   <strong><a href="artifacts/demo/neurosteno-demo.mp4">Смотреть видео</a></strong> ·
   <a href="docs/INSTALLATION.md">Начать работу</a> ·
   <a href="docs/ARCHITECTURE.md">Архитектура</a> ·
@@ -53,7 +53,7 @@
 
 | № | Материал | Где открыть |
 |---|---|---|
-| 1 | **APK приложения** | [neurosteno-arm64.apk](artifacts/apk/neurosteno-arm64.apk) · [SHA-256](artifacts/apk/SHA256SUMS.txt) |
+| 1 | **APK приложения** | [neurosteno-arm64.apk](https://github.com/BazilBaranov/nuclear-hack-neurosteno/releases/download/v0.1.0/neurosteno-arm64.apk) · [SHA-256](artifacts/apk/SHA256SUMS.txt) |
 | 2 | **Исходный код** | [Android-модуль](app/) · [Карта исходников](src/mobile/README.md) |
 | 3 | **Установка и использование** | [INSTALLATION.md](docs/INSTALLATION.md) |
 | 4 | **Архитектура и модели** | [ARCHITECTURE.md](docs/ARCHITECTURE.md) · [MODELS.md](docs/MODELS.md) |
@@ -62,12 +62,12 @@
 | 7 | **Видеодемонстрация** | [MP4](artifacts/demo/neurosteno-demo.mp4) · [Описание](artifacts/demo/README.md) |
 
 > Репозиторий приватный. Для проверки по ссылке организаторам потребуется доступ,
-> предоставленный владельцем. Все семь материалов находятся непосредственно в Git;
-> видео и APK не зависят от внешнего файлообменника.
+> предоставленный владельцем. APK опубликован в Releases; исходники, документация,
+> результаты тестов и видео хранятся в Git. Все материалы доступны по ссылкам выше.
 
 ## Первый запуск
 
-1. [Скачайте APK](artifacts/apk/neurosteno-arm64.apk) через **Download raw file** и установите на ARM64 Android.
+1. [Скачайте APK](https://github.com/BazilBaranov/nuclear-hack-neurosteno/releases/download/v0.1.0/neurosteno-arm64.apk) из **Releases** и установите на ARM64 Android.
 2. В меню **Модели** загрузите GigaAM-v3 и Pyannote/TitaNet для русского;
    Whisper base — для английского. Whisper tiny нужен для режима языка «Авто».
 3. Для пунктуации загрузите Qwen 3.5 и включите соответствующий пункт.
@@ -130,7 +130,7 @@ config/                 карта конфигурации и зависимо�
 scripts/                подготовка runtime, сборка, проверка поставки
 tests/                  метрики и синтетические fixtures
 docs/                   инструкции, архитектура, модели, ограничения, отчёты
-artifacts/apk/          устанавливаемый APK и контрольная сумма
+artifacts/apk/          ссылка на релиз и контрольная сумма
 artifacts/demo/         видео и настоящий экспорт JSON
 artifacts/test-results/ результаты проверок в CSV/JSON
 ```

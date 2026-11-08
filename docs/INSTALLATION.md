@@ -4,8 +4,8 @@
 
 ## Быстрый старт
 
-1. Скачайте [neurosteno-arm64.apk](../artifacts/apk/neurosteno-arm64.apk).
-   На GitHub откройте файл и нажмите **Download raw file**.
+1. Скачайте [neurosteno-arm64.apk](https://github.com/BazilBaranov/nuclear-hack-neurosteno/releases/download/v0.1.0/neurosteno-arm64.apk).
+   Файл хранится в **Releases**, отдельно от исходного кода.
 2. Откройте APK на Android и разрешите установку из выбранного источника.
 3. Откройте «Нейро-стенографист» → меню → **Модели**.
 4. Загрузите модели по таблице ниже и дождитесь «Готова к работе».
@@ -74,7 +74,7 @@
 
 ```bash
 adb devices
-adb -s SERIAL install -r artifacts/apk/neurosteno-arm64.apk
+adb -s SERIAL install -r neurosteno-arm64.apk
 ```
 
 Пакет: `dev.neurostenografist.ultra`, версия `0.1.0-ultra-optimized`.
@@ -82,10 +82,10 @@ APK подписан debug-сертификатом сборочной маши�
 Обновление требует совпадения подписи. При конфликте подписи сначала экспортируйте
 нужные результаты: удаление старой установки удалит её приватные модели и данные.
 
-Проверка скачанного файла:
+Скачайте [SHA256SUMS.txt](https://github.com/BazilBaranov/nuclear-hack-neurosteno/releases/download/v0.1.0/SHA256SUMS.txt)
+в одну папку с APK. Из этой папки выполните проверку:
 
 ```bash
-cd artifacts/apk
 sha256sum -c SHA256SUMS.txt
 ```
 
