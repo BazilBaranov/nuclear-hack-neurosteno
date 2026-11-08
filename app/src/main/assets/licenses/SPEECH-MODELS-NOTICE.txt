@@ -1,0 +1,42 @@
+Speech enhancement and speaker extraction components
+Source/license review: 2026-11-07
+
+GTCRN
+Copyright (c) 2024 Rong Xiaobin.
+Official repository: https://github.com/Xiaobin-Rong/gtcrn
+Repository license: MIT; preserved in GTCRN-LICENSE.txt.
+The gtcrn_simple.onnx model originates in that repository's stream/onnx_models
+directory. The sherpa-onnx distribution adds runtime metadata; this application
+downloads it as gtcrn.onnx without changing the model bytes.
+The repository license is the available license evidence for this model;
+no separate model-specific license grant was found during this review.
+
+VoxLock
+Copyright 2026 Arbaz Siddiqui.
+Official repository: https://github.com/arbazsiddiqui/voxlock
+Release: https://github.com/arbazsiddiqui/voxlock/releases/tag/sherpa-onnx-models
+The release explicitly publishes its model weights under Apache-2.0.
+VoxLock-LICENSE.txt and VoxLock-NOTICE.txt are preserved unchanged. The latter
+attributes the REAL-TSE checkpoint and WeSep inference code to their authors.
+This application downloads voxlock_enroll.onnx and voxlock_chunk_int8.onnx,
+renaming the local files to enroll.onnx and chunk_int8.onnx without modifying
+their contents. Upstream adds sherpa metadata; the release states that the
+model graphs and weights are unchanged from its identified upstream revision.
+The full upstream NOTICE also describes demo files and a Web runtime; retaining
+that notice does not mean those demo files or Web runtime are bundled here.
+
+Runtime
+sherpa-onnx 2.0.1: Apache-2.0 (sherpa-onnx-LICENSE.txt).
+ONNX Runtime 1.28.2: MIT, Copyright (c) Microsoft Corporation
+(onnxruntime-LICENSE.txt and onnxruntime-ThirdPartyNotices.txt).
+The Android arm64 sherpa build in this project enables NNAPI, disables the NNAPI
+reference CPU, gives profiling sessions unique names, and adds JNI exception
+guards. Reproduction and patch sources: scripts/prepare-nnapi.sh and
+scripts/patch-sherpa-jni.py in the project source distribution.
+License notices for the source dependencies used by that arm64 build are in
+sherpa-dependencies/. Source archives and versions are listed in
+docs/speech-model-licenses.md in the project source distribution.
+
+Exact license-source URLs, snapshot revisions and file SHA-256 values are in
+speech-model-license-sources.json. These notices describe the reviewed
+components, not a blanket license for unrelated models, recordings or datasets.

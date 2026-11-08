@@ -1,0 +1,424 @@
+{
+  "license": "CC0-1.0 (team-generated synthetic audio; no third-party work)",
+  "generated_by": "tests/fixtures/generate_fixtures.py (deterministic, stdlib only)",
+  "consent": "not applicable (no personal data, no human speakers recorded)",
+  "caveat": "SYNTHETIC STAND-INS, NOT REAL SPEECH. Valid for offset/speaker/recurrence/durability checks and metric plumbing. Any WER computed on these files is meaningless and must not be reported.",
+  "references": [
+    {
+      "file": "dev-ru-two-recurrence.wav",
+      "expect_duration_ms": 14013,
+      "language": "ru",
+      "split_purpose": "development",
+      "checksum_sha256": "78664e3e9edf72ff23738f13f9b15d0159b137eac9256c6eb8cd5d9900b439aa",
+      "consent_or_license": "CC0-1.0 (team-generated synthetic audio; no third-party work)",
+      "notes": "2 speakers; 2.5 s leading silence; speaker_1 returns last (recurrence); short one-word-length replies",
+      "speaker_recurrence": [
+        "speaker_1",
+        "speaker_2"
+      ],
+      "leading_silence_ms": 2500,
+      "overlap_ms": 0,
+      "segments": [
+        {
+          "kind": "silence",
+          "start_ms": 0,
+          "end_ms": 2500,
+          "speaker": null
+        },
+        {
+          "kind": "speech",
+          "start_ms": 2500,
+          "end_ms": 5900,
+          "speaker": "speaker_1"
+        },
+        {
+          "kind": "speech",
+          "start_ms": 5900,
+          "end_ms": 7200,
+          "speaker": "speaker_2"
+        },
+        {
+          "kind": "speech",
+          "start_ms": 7200,
+          "end_ms": 8100,
+          "speaker": "speaker_1"
+        },
+        {
+          "kind": "speech",
+          "start_ms": 8100,
+          "end_ms": 8600,
+          "speaker": "speaker_2"
+        },
+        {
+          "kind": "speech",
+          "start_ms": 8600,
+          "end_ms": 10100,
+          "speaker": "speaker_1"
+        },
+        {
+          "kind": "speech",
+          "start_ms": 10100,
+          "end_ms": 10700,
+          "speaker": "speaker_2"
+        },
+        {
+          "kind": "speech",
+          "start_ms": 10700,
+          "end_ms": 12900,
+          "speaker": "speaker_1"
+        },
+        {
+          "kind": "silence",
+          "start_ms": 12900,
+          "end_ms": 14013,
+          "speaker": null
+        }
+      ]
+    },
+    {
+      "file": "dev-en-three-overlap.wav",
+      "expect_duration_ms": 26000,
+      "language": "en",
+      "split_purpose": "development",
+      "checksum_sha256": "3a9fdc9310b7edecacff87211785bd9de11e937a1c4244b9a7bf606efa23a811",
+      "consent_or_license": "CC0-1.0 (team-generated synthetic audio; no third-party work)",
+      "notes": "3 speakers; 12.0-13.5 s concurrent overlap of speaker_1+speaker_2 (each segment owned by ONE speaker); noise 16-20 s; speaker_2 recurrence",
+      "speaker_recurrence": [
+        "speaker_1",
+        "speaker_2",
+        "speaker_3"
+      ],
+      "leading_silence_ms": 1200,
+      "overlap_ms": 1500,
+      "segments": [
+        {
+          "kind": "silence",
+          "start_ms": 0,
+          "end_ms": 1200,
+          "speaker": null
+        },
+        {
+          "kind": "speech",
+          "start_ms": 1200,
+          "end_ms": 4700,
+          "speaker": "speaker_1"
+        },
+        {
+          "kind": "speech",
+          "start_ms": 4700,
+          "end_ms": 8000,
+          "speaker": "speaker_2"
+        },
+        {
+          "kind": "speech",
+          "start_ms": 8000,
+          "end_ms": 12000,
+          "speaker": "speaker_3"
+        },
+        {
+          "kind": "overlap",
+          "start_ms": 12000,
+          "end_ms": 13500,
+          "speaker": "speaker_1+speaker_2"
+        },
+        {
+          "kind": "speech",
+          "start_ms": 13500,
+          "end_ms": 16000,
+          "speaker": "speaker_3"
+        },
+        {
+          "kind": "noise",
+          "start_ms": 16000,
+          "end_ms": 20000,
+          "speaker": null
+        },
+        {
+          "kind": "speech",
+          "start_ms": 20000,
+          "end_ms": 23400,
+          "speaker": "speaker_2"
+        },
+        {
+          "kind": "silence",
+          "start_ms": 23400,
+          "end_ms": 26000,
+          "speaker": null
+        }
+      ]
+    },
+    {
+      "file": "dev-one-word.wav",
+      "expect_duration_ms": 6000,
+      "language": "en",
+      "split_purpose": "development",
+      "checksum_sha256": "e6c4a31f3778dccde8d094accf7bf8d0a023c81a6562a4a6e2e78cd0c4c2ba4e",
+      "consent_or_license": "CC0-1.0 (team-generated synthetic audio; no third-party work)",
+      "notes": "alternating one-word-length replies after 2 s silence",
+      "speaker_recurrence": [
+        "speaker_1",
+        "speaker_2"
+      ],
+      "leading_silence_ms": 2000,
+      "overlap_ms": 0,
+      "segments": [
+        {
+          "kind": "silence",
+          "start_ms": 0,
+          "end_ms": 2000,
+          "speaker": null
+        },
+        {
+          "kind": "speech",
+          "start_ms": 2000,
+          "end_ms": 2700,
+          "speaker": "speaker_1"
+        },
+        {
+          "kind": "speech",
+          "start_ms": 2700,
+          "end_ms": 3300,
+          "speaker": "speaker_2"
+        },
+        {
+          "kind": "speech",
+          "start_ms": 3300,
+          "end_ms": 4000,
+          "speaker": "speaker_1"
+        },
+        {
+          "kind": "silence",
+          "start_ms": 4000,
+          "end_ms": 6000,
+          "speaker": null
+        }
+      ]
+    },
+    {
+      "file": "dev-uncertain-speech.wav",
+      "expect_duration_ms": 8000,
+      "language": "en",
+      "split_purpose": "development",
+      "checksum_sha256": "eee1db7aee841620ee8ac025c45f205d883bf01ad0f0b3d096aeb4152f6cac1c",
+      "consent_or_license": "CC0-1.0 (team-generated synthetic audio; no third-party work)",
+      "notes": "two low-SNR speech-like segments (uncertain speech); no confident reference speakers",
+      "speaker_recurrence": [
+        "speaker_1",
+        "speaker_2"
+      ],
+      "leading_silence_ms": 500,
+      "overlap_ms": 0,
+      "segments": [
+        {
+          "kind": "silence",
+          "start_ms": 0,
+          "end_ms": 500,
+          "speaker": null
+        },
+        {
+          "kind": "lowsnr",
+          "start_ms": 500,
+          "end_ms": 3800,
+          "speaker": "speaker_1"
+        },
+        {
+          "kind": "lowsnr",
+          "start_ms": 3800,
+          "end_ms": 6600,
+          "speaker": "speaker_2"
+        },
+        {
+          "kind": "silence",
+          "start_ms": 6600,
+          "end_ms": 8000,
+          "speaker": null
+        }
+      ]
+    },
+    {
+      "file": "final-ru-two-short.wav",
+      "expect_duration_ms": 12500,
+      "language": "ru",
+      "split_purpose": "final-check",
+      "checksum_sha256": "fc8629df085544e1b06ec6ae4a75ea15d63730a4a939f6658b4ceffd2157f24a",
+      "consent_or_license": "CC0-1.0 (team-generated synthetic audio; no third-party work)",
+      "notes": "two speakers, 1.8 s leading silence, short replies, recurrence",
+      "speaker_recurrence": [
+        "speaker_A",
+        "speaker_B"
+      ],
+      "leading_silence_ms": 1800,
+      "overlap_ms": 0,
+      "segments": [
+        {
+          "kind": "silence",
+          "start_ms": 0,
+          "end_ms": 1800,
+          "speaker": null
+        },
+        {
+          "kind": "speech",
+          "start_ms": 1800,
+          "end_ms": 5300,
+          "speaker": "speaker_A"
+        },
+        {
+          "kind": "speech",
+          "start_ms": 5300,
+          "end_ms": 7200,
+          "speaker": "speaker_B"
+        },
+        {
+          "kind": "speech",
+          "start_ms": 7200,
+          "end_ms": 9000,
+          "speaker": "speaker_A"
+        },
+        {
+          "kind": "speech",
+          "start_ms": 9000,
+          "end_ms": 11000,
+          "speaker": "speaker_B"
+        },
+        {
+          "kind": "silence",
+          "start_ms": 11000,
+          "end_ms": 12500,
+          "speaker": null
+        }
+      ]
+    },
+    {
+      "file": "final-en-three-speakers.wav",
+      "expect_duration_ms": 21300,
+      "language": "en",
+      "split_purpose": "final-check",
+      "checksum_sha256": "2171278cf0a6f92d6ef6d0c7f29e8a60d628a30ebd8579a3ca30e3379a2b5df7",
+      "consent_or_license": "CC0-1.0 (team-generated synthetic audio; no third-party work)",
+      "notes": "three speakers; 2.5 s leading silence; one-word-length closing turns",
+      "speaker_recurrence": [
+        "p1",
+        "p2",
+        "p3"
+      ],
+      "leading_silence_ms": 2500,
+      "overlap_ms": 0,
+      "segments": [
+        {
+          "kind": "silence",
+          "start_ms": 0,
+          "end_ms": 2500,
+          "speaker": null
+        },
+        {
+          "kind": "speech",
+          "start_ms": 2500,
+          "end_ms": 6500,
+          "speaker": "p1"
+        },
+        {
+          "kind": "speech",
+          "start_ms": 6500,
+          "end_ms": 10500,
+          "speaker": "p2"
+        },
+        {
+          "kind": "speech",
+          "start_ms": 10500,
+          "end_ms": 14000,
+          "speaker": "p3"
+        },
+        {
+          "kind": "speech",
+          "start_ms": 14000,
+          "end_ms": 17000,
+          "speaker": "p1"
+        },
+        {
+          "kind": "speech",
+          "start_ms": 17000,
+          "end_ms": 17700,
+          "speaker": "p2"
+        },
+        {
+          "kind": "speech",
+          "start_ms": 17700,
+          "end_ms": 18300,
+          "speaker": "p3"
+        },
+        {
+          "kind": "silence",
+          "start_ms": 18300,
+          "end_ms": 21300,
+          "speaker": null
+        }
+      ]
+    },
+    {
+      "file": "final-unsupported-tone.wav",
+      "expect_duration_ms": 11000,
+      "language": "unsupported",
+      "split_purpose": "final-check",
+      "checksum_sha256": "db0dc312e1a546f88145149dac2f7e4547699ef10d0af2c7849fc4271769afff",
+      "consent_or_license": "CC0-1.0 (team-generated synthetic audio; no third-party work)",
+      "notes": "flat mid-band tones only; no speech-like structure anywhere",
+      "speaker_recurrence": [],
+      "leading_silence_ms": 0,
+      "overlap_ms": 0,
+      "segments": [
+        {
+          "kind": "tone",
+          "start_ms": 0,
+          "end_ms": 6000,
+          "speaker": null
+        },
+        {
+          "kind": "silence",
+          "start_ms": 6000,
+          "end_ms": 7000,
+          "speaker": null
+        },
+        {
+          "kind": "tone",
+          "start_ms": 7000,
+          "end_ms": 11000,
+          "speaker": null
+        }
+      ]
+    },
+    {
+      "file": "final-uncertain-low-snr.wav",
+      "expect_duration_ms": 7000,
+      "language": "ru",
+      "split_purpose": "final-check",
+      "checksum_sha256": "e5cec3e0d8ae138ee0d392834259c83af3fb4765c02dc85e568d023fe3bc8fa1",
+      "consent_or_license": "CC0-1.0 (team-generated synthetic audio; no third-party work)",
+      "notes": "single very low-SNR voiced segment (uncertain speech case)",
+      "speaker_recurrence": [
+        "speaker_x"
+      ],
+      "leading_silence_ms": 900,
+      "overlap_ms": 0,
+      "segments": [
+        {
+          "kind": "silence",
+          "start_ms": 0,
+          "end_ms": 900,
+          "speaker": null
+        },
+        {
+          "kind": "lowsnr",
+          "start_ms": 900,
+          "end_ms": 4500,
+          "speaker": "speaker_x"
+        },
+        {
+          "kind": "silence",
+          "start_ms": 4500,
+          "end_ms": 7000,
+          "speaker": null
+        }
+      ]
+    }
+  ]
+}

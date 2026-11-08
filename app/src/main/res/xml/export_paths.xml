@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Only the cache exports dir is shared; history/model directories are never exposed. -->
+<paths>
+    <cache-path name="transcripts" path="exports/" />
+</paths>

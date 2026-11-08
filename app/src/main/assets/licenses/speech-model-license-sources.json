@@ -1,0 +1,45 @@
+{
+  "checkedAt": "2026-11-07",
+  "snapshots": {
+    "Xiaobin-Rong/gtcrn": "502ebfab64da7c4a9af78dcb9c6ceef1ebb01c73",
+    "arbazsiddiqui/voxlock": "48b9a71e9b6ce853670c9a4dbc64ddb532638d53"
+  },
+  "files": [
+    {
+      "file": "GTCRN-LICENSE.txt",
+      "url": "https://raw.githubusercontent.com/Xiaobin-Rong/gtcrn/502ebfab64da7c4a9af78dcb9c6ceef1ebb01c73/LICENSE",
+      "sha256": "c467165e5860b4a7494ef4a6e2788e4115d95b5b8989bb5f86287089adddf794",
+      "bytes": 1069
+    },
+    {
+      "file": "VoxLock-LICENSE.txt",
+      "url": "https://raw.githubusercontent.com/arbazsiddiqui/voxlock/48b9a71e9b6ce853670c9a4dbc64ddb532638d53/LICENSE",
+      "sha256": "cfc7749b96f63bd31c3c42b5c471bf756814053e847c10f3eb003417bc523d30",
+      "bytes": 11358
+    },
+    {
+      "file": "VoxLock-NOTICE.txt",
+      "url": "https://raw.githubusercontent.com/arbazsiddiqui/voxlock/48b9a71e9b6ce853670c9a4dbc64ddb532638d53/NOTICE",
+      "sha256": "245ce5d9925659adae2f664a2f4886f11dceabc1c9a99d151a9140afecb0d457",
+      "bytes": 940
+    },
+    {
+      "file": "sherpa-onnx-LICENSE.txt",
+      "url": "https://raw.githubusercontent.com/k2-fsa/sherpa-onnx/v2.0.1/LICENSE",
+      "sha256": "cfc7749b96f63bd31c3c42b5c471bf756814053e847c10f3eb003417bc523d30",
+      "bytes": 11358
+    },
+    {
+      "file": "onnxruntime-LICENSE.txt",
+      "url": "https://raw.githubusercontent.com/microsoft/onnxruntime/v1.28.2/LICENSE",
+      "sha256": "2f07c72751aed99790b8a4869cf2311df85a860b22ded05fa22803587a48922c",
+      "bytes": 1073
+    },
+    {
+      "file": "onnxruntime-ThirdPartyNotices.txt",
+      "url": "https://raw.githubusercontent.com/microsoft/onnxruntime/v1.28.2/ThirdPartyNotices.txt",
+      "sha256": "0e07b95f3a8d6230037707c5c4a2b554d12c4cb67369669ac255635528ffcee2",
+      "bytes": 325054
+    }
+  ]
+}

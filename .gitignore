@@ -1,0 +1,30 @@
+# Build and local tooling
+.gradle/
+.kotlin/
+.cxx/
+**/build/
+.gradle-home/
+local.properties
+libs/repo/
+artifacts/
+
+# Local models and credentials
+*.onnx
+*.gguf
+*.nemo
+*.safetensors
+*.apk
+*.aab
+*.jks
+*.keystore
+.env
+.env.*
+
+# Editor and test scratch
+.idea/
+*.iml
+captures/
+.DS_Store
+tests/.scratch/
+*.log
+__pycache__/
