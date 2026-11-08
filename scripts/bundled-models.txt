@@ -1,0 +1,5 @@
+d582f4b4c6b48205de7e0643c57df0df5615a3c176189be3fc461e9d18827b5d diarization/segmentation.int8.onnx https://huggingface.co/csukuangfj/sherpa-onnx-pyannote-segmentation-3-0/resolve/9403a6902bb58e3d5ae8c7e77c3422de279db2e0/model.int8.onnx
+ad4a1802485d8b34c722d2a9d04249662f2ece5d28a7a039063ca22f515a789e diarization/titanet-small.onnx https://huggingface.co/FluffyBunnies/titanet-small-onnx/resolve/5fae6d4e517a019cab845fd98935fd5b3776dfed/titanet.onnx
+4cbe7b22fa9026b843b60a68640c747de05bafb1a11b57edc0e66c232d9f33a9 whisper-small/small-encoder.int8.onnx https://huggingface.co/csukuangfj/sherpa-onnx-whisper-small/resolve/8f3c18b358db4d1f2fc1eae49d75cd20989e4309/small-encoder.int8.onnx
+acad50b5c782696e91b55914cc5ab4f756f1532f76e22aa6fc615f39fb69a8ee whisper-small/small-decoder.int8.onnx https://huggingface.co/csukuangfj/sherpa-onnx-whisper-small/resolve/8f3c18b358db4d1f2fc1eae49d75cd20989e4309/small-decoder.int8.onnx
+b34b360dbb493e781e479794586d661700670d65564001f23024971d1f2fa126 whisper-small/small-tokens.txt https://huggingface.co/csukuangfj/sherpa-onnx-whisper-small/resolve/8f3c18b358db4d1f2fc1eae49d75cd20989e4309/small-tokens.txt

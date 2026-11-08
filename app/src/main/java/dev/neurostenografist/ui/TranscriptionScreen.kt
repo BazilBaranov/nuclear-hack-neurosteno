@@ -68,9 +68,9 @@ fun TranscriptionScreen(
     onSelectedSource: (String) -> Unit,
     onOpenRun: (String) -> Unit,
 ) {
-    var chosenModel by rememberSaveable { mutableStateOf(AUTO_MODEL_ID) }
+    var chosenModel by rememberSaveable { mutableStateOf(ModelCatalog.WHISPER_SMALL) }
     var chosenDiarizer by rememberSaveable { mutableStateOf(ModelCatalog.DIARIZATION) }
-    var language by rememberSaveable { mutableStateOf(SpeechLanguage.AUTO) }
+    var language by rememberSaveable { mutableStateOf(SpeechLanguage.RUSSIAN) }
     var punctuation by rememberSaveable { mutableStateOf(false) }
     var denoise by rememberSaveable { mutableStateOf(false) }
     var separateOverlappingSpeech by rememberSaveable { mutableStateOf(false) }

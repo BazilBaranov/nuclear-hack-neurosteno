@@ -12,6 +12,7 @@ artifacts/*
 !artifacts/test-results/
 
 # Local models and credentials
+/app/src/main/assets/models/
 *.onnx
 *.litertlm
 *.tflite

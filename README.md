@@ -69,11 +69,9 @@
 ## Первый запуск
 
 1. [Скачайте APK](https://github.com/BazilBaranov/nuclear-hack-neurosteno/releases/latest/download/neurosteno-arm64.apk) из **Releases** и установите на ARM64 Android.
-2. В меню **Модели** загрузите GigaAM-v3 и Pyannote/TitaNet для русского;
-   Whisper base — для английского. Whisper tiny нужен для режима языка «Авто».
-3. Для пунктуации загрузите Qwen 3.5 и включите соответствующий пункт.
-4. **Расшифровка → Выбрать аудио → Расшифровать → Открыть результат.**
-5. Проверьте текст, при необходимости исправьте и нажмите **Сохранить JSON**.
+2. **Расшифровка → Выбрать аудио → Расшифровать → Открыть результат.** Whisper small и Pyannote/TitaNet уже в APK v0.3.0.
+3. Для английской записи выберите «Английский». Режим языка «Авто» требует Whisper tiny из раздела «Модели».
+4. Проверьте текст, при необходимости исправьте и нажмите **Сохранить JSON**.
 
 [Подробная инструкция, размеры моделей и ADB →](docs/INSTALLATION.md)
 
@@ -115,6 +113,7 @@ export VULKAN_SDK="$PWD/artifacts/build/vulkan-tools/usr"
 
 ./scripts/prepare-nnapi.sh &&
   ./scripts/prepare-vulkan-tools.sh &&
+  ./scripts/prepare-bundled-models.sh &&
   ./scripts/build.sh :app:assembleOptimized
 ```
 

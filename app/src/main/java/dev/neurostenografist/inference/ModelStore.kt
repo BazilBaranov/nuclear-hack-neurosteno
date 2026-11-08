@@ -149,6 +149,12 @@ class ModelStore internal constructor(
         onProgress: (Progress) -> Unit,
     ) {
         val bundle = ModelCatalog.byId(bundleId) // unknown/unsafe IDs never reach the file system
+        if (bundle.id in ModelCatalog.bundledIds) {
+            withContext(Dispatchers.IO) {
+                if (!isReady(bundle.id)) installBundle(bundle, onProgress)
+            }
+            return
+        }
         if (!bundle.downloadable) {
             throw ModelBundleException(
                 "bundle '${bundle.id}' has no pinned download source — it was shipped only inside old " +

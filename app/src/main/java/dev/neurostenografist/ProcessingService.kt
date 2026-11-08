@@ -10,6 +10,7 @@ import android.os.Build
 import android.os.IBinder
 import androidx.core.app.NotificationCompat
 import dev.neurostenografist.audio.AudioDecoder
+import dev.neurostenografist.core.AUTO_MODEL_ID
 import dev.neurostenografist.core.Progress
 import dev.neurostenografist.core.RunStatus
 import dev.neurostenografist.data.RetryEvidence
@@ -171,7 +172,8 @@ class ProcessingService : Service() {
                 require(ModelCatalog.byId(request.diarizationModelId).kind == BundleKind.DIARIZATION) {
                     "Выберите модель диаризации"
                 }
-                requireReadyModels(ModelCatalog.requiredModelIds(request))
+                val required = ModelCatalog.requiredModelIds(request)
+                requireReadyModels(if (request.modelId == AUTO_MODEL_ID) required + ModelCatalog.WHISPER_SMALL else required)
                 // Readiness is genuine verified contents, never catalog inventory.
                 val readyAsrIds =
                     ModelCatalog.bundles
@@ -420,15 +422,19 @@ class ProcessingService : Service() {
         }
     }
 
-    /** Processing never downloads: after Models preparation the entire run is offline. */
-    private fun requireReadyModels(required: Iterable<String>) {
+    /** Extract bundled assets on first use; processing never downloads models. */
+    private suspend fun requireReadyModels(required: Iterable<String>) {
         val modelStore = AppGraph.modelStore(this)
         notify(Progress("checking models", null))
         for (id in required) {
-            if (!modelStore.isReady(
-                    id,
-                )
-            ) {
+            checkCancellation()
+            if (!modelStore.isReady(id) && id in ModelCatalog.bundledIds) {
+                modelStore.install(id) { progress ->
+                    checkCancellation()
+                    notify(progress)
+                }
+            }
+            if (!modelStore.isReady(id)) {
                 throw ModelBundleException("Подготовьте модель «${ModelCatalog.byId(id).displayName}» в разделе «Модели»")
             }
         }

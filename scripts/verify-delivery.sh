@@ -66,10 +66,12 @@ for expected in "$@"; do
   unzip -Z1 "$APK" "lib/$expected/libneuro_nnapi_probe.so" >/dev/null 2>&1 || fail "NNAPI driver probe missing for $expected"
   echo "abi_$expected=present"
 done
-if unzip -Z1 "$APK" | grep -E '^assets/.*\.(onnx|gguf|nemo|safetensors|tflite|litertlm)$' >/dev/null; then
-  fail "APK still contains model weights"
-fi
-echo "model_weights_in_apk=none"
+while read -r digest name url; do
+  actual="$(unzip -p "$APK" "assets/models/$name" | sha256sum | cut -d' ' -f1)" ||
+    fail "missing bundled model asset $name"
+  [[ "$actual" == "$digest" ]] || fail "bundled model asset checksum mismatch: $name"
+done < scripts/bundled-models.txt
+echo "model_weights_in_apk=whisper-small,pyannote-titanet"
 
 # 3. Rebuilt dependency: compare actual bytes to its generated build manifest.
 DEPS_DIR=libs/repo/com/k2fsa/sherpa/onnx/2.0.1-nnapi3

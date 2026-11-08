@@ -73,7 +73,7 @@ class AppViewModel(
             for (ignored in refreshRequests) {
                 try {
                     AppGraph.onProcessStart(app)
-                    val ready = ModelCatalog.bundles.filter { modelStore.isReady(it.id) }.map { it.id }.toSet()
+                    val ready = ModelCatalog.bundles.filter { modelStore.isReady(it.id) }.map { it.id }.toSet() + ModelCatalog.bundledIds
                     val sources = sourceStore.list()
                     val runs = runStore.list(includeCompleted = false)
                     _ui.update { it.copy(sources = sources, runs = runs, readyBundles = ready) }
@@ -222,7 +222,7 @@ class AppViewModel(
                 require(ModelCatalog.byId(request.diarizationModelId).kind == BundleKind.DIARIZATION) {
                     "Выберите модель диаризации"
                 }
-                ModelCatalog.requiredModelIds(request).firstOrNull { !modelStore.isReady(it) }?.let { id ->
+                ModelCatalog.requiredModelIds(request).firstOrNull { it !in ModelCatalog.bundledIds && !modelStore.isReady(it) }?.let { id ->
                     if (id == ModelCatalog.WHISPER_TINY && request.language == SpeechLanguage.AUTO) {
                         error("Скачайте Whisper tiny в разделе «Модели» или укажите язык записи вручную")
                     }

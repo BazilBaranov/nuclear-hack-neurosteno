@@ -9,7 +9,7 @@ import dev.neurostenografist.core.SpeechLanguage
  * Explicit catalog of the model bundles this build supports. Unknown or untested
  * downloaded architectures are deliberately absent: they must never be selectable.
  *
- * Model weights are NOT packaged in the APK. Every downloadable bundle pins a
+ * The APK includes Whisper small and Pyannote/TitaNet. Every downloadable bundle pins a
  * concrete public HTTPS revision — Hugging Face `resolve/<commit-sha>` URLs, which
  * are immutable per revision — plus the exact SHA-256 and byte size of every
  * member; [ModelStore] downloads and verifies them into app-private storage.
@@ -360,6 +360,8 @@ object ModelCatalog {
                     ),
             ),
         )
+
+    val bundledIds = setOf(WHISPER_SMALL, DIARIZATION)
 
     // Older bundles remain resolvable for existing runs and turn retries.
     val selectableBundles = bundles.filterNot { it.id == ZIPFORMER_RU || it.id == LEGACY_PUNCTUATION }

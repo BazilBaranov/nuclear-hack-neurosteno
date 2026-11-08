@@ -18,8 +18,8 @@ android {
         applicationId = "dev.neurostenografist"
         minSdk = 28
         targetSdk = 35
-        versionCode = 2
-        versionName = "0.2.0"
+        versionCode = 3
+        versionName = "0.3.0"
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         externalNativeBuild {
             cmake { arguments += "-DANDROID_STL=c++_static" }
@@ -61,10 +61,6 @@ android {
     }
     buildFeatures {
         compose = true
-    }
-    androidResources {
-        // Weights are downloaded into private storage, never shipped in the APK.
-        ignoreAssetsPattern = "!.svn:!.git:!.ds_store:!*.scc:.*:CVS:thumbs.db:picasa.ini:!*~:models"
     }
     packaging {
         resources.excludes += "/META-INF/{AL2.0,LGPL2.1}"
