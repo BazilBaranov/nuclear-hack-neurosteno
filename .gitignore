@@ -6,7 +6,10 @@
 .gradle-home/
 local.properties
 libs/repo/
-artifacts/
+artifacts/*
+!artifacts/apk/
+!artifacts/demo/
+!artifacts/test-results/
 
 # Local models and credentials
 *.onnx
@@ -28,3 +31,6 @@ captures/
 tests/.scratch/
 *.log
 __pycache__/
+
+# Deliberate hackathon deliverables
+!artifacts/apk/*.apk

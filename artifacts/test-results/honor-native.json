@@ -1,0 +1,126 @@
+{
+  "device": "HONOR ELI-NX9",
+  "sdk": 36,
+  "note": "Single fixture; model/backend execution check, not a quality benchmark or NPU claim",
+  "qwen_cpu": {
+    "gpuRequested": false,
+    "status": "passed",
+    "devices": [
+      "Vulkan0: Adreno (TM) 720",
+      "CPU: CPU"
+    ],
+    "loadMs": 784.937552,
+    "inferenceMs": 13659.396922,
+    "output": "Привет, как дела?",
+    "backendReport": "CPU",
+    "actualGpu": false,
+    "repeatInferenceMs": 2626.065416,
+    "repeatOutput": "Привет, как дела?"
+  },
+  "qwen_gpu": {
+    "gpuRequested": true,
+    "status": "passed",
+    "devices": [
+      "Vulkan0: Adreno (TM) 720",
+      "CPU: CPU"
+    ],
+    "loadMs": 2414.226301,
+    "inferenceMs": 5285.861769,
+    "output": "Привет, как дела?",
+    "backendReport": "CPU; ошибка вычисления GPU, повтор на CPU",
+    "actualGpu": false,
+    "repeatInferenceMs": 2637.432655,
+    "repeatOutput": "Привет, как дела?"
+  },
+  "nemotron_cpu": {
+    "gpuRequested": false,
+    "status": "passed",
+    "devices": [
+      "Vulkan0: Adreno (TM) 720",
+      "CPU: CPU"
+    ],
+    "audioSeconds": 15.1253125,
+    "audioSha256": "4c9b5b07df23ea50cc3123ebf41e9601e2560d9ba5ea181aff4cda3ac271576a",
+    "modelSha256": "08456d9e22cd9a323c0364d98375f3746d6e68507ebb705cd46438c534c7a3a1",
+    "loadAndInferenceMs": 19490.173222,
+    "rtf": 1.2885798704654865,
+    "backendReport": "Ускорение диаризации: CPU",
+    "actualGpu": false,
+    "segments": [
+      {
+        "speaker": 0,
+        "startSec": 0,
+        "endSec": 0.8089999836832285
+      },
+      {
+        "speaker": 1,
+        "startSec": 0.5809999818950892,
+        "endSec": 5.718999873936176
+      },
+      {
+        "speaker": 0,
+        "startSec": 5.940999862089753,
+        "endSec": 10.238999772906304
+      },
+      {
+        "speaker": 1,
+        "startSec": 9.940999772682787,
+        "endSec": 12.228999728426338
+      },
+      {
+        "speaker": 1,
+        "startSec": 13.0909997022748,
+        "endSec": 14.528999677017332
+      }
+    ]
+  },
+  "nemotron_gpu": {
+    "gpuRequested": true,
+    "status": "passed",
+    "devices": [
+      "Vulkan0: Adreno (TM) 720",
+      "CPU: CPU"
+    ],
+    "audioSeconds": 15.1253125,
+    "audioSha256": "4c9b5b07df23ea50cc3123ebf41e9601e2560d9ba5ea181aff4cda3ac271576a",
+    "modelSha256": "08456d9e22cd9a323c0364d98375f3746d6e68507ebb705cd46438c534c7a3a1",
+    "loadAndInferenceMs": 12963.507912,
+    "rtf": 0.8570737240635523,
+    "backendReport": "Ускорение диаризации: CPU; Vulkan Nemotron недоступен: vk::Device::createComputePipeline: ErrorUnknown",
+    "actualGpu": false,
+    "segments": [
+      {
+        "speaker": 0,
+        "startSec": 0,
+        "endSec": 0.8089999836832285
+      },
+      {
+        "speaker": 1,
+        "startSec": 0.5809999818950892,
+        "endSec": 5.718999873936176
+      },
+      {
+        "speaker": 0,
+        "startSec": 5.940999862089753,
+        "endSec": 10.238999772906304
+      },
+      {
+        "speaker": 1,
+        "startSec": 9.940999772682787,
+        "endSec": 12.228999728426338
+      },
+      {
+        "speaker": 1,
+        "startSec": 13.0909997022748,
+        "endSec": 14.528999677017332
+      }
+    ],
+    "cpuAgreement": {
+      "referenceSpeakers": 2,
+      "candidateSpeakers": 2,
+      "speakerFrameError": 0,
+      "overlapSecondsDelta": 0
+    }
+  },
+  "sequence_warning": "Combined Qwen GPU -> Nemotron GPU probe was stopped after 3 minutes without completion. Nemotron fresh-process fallback reported below."
+}

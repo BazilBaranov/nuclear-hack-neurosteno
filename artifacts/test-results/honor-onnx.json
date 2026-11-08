@@ -1,0 +1,29 @@
+{
+  "device": "HONOR ELI-NX9",
+  "sdk": 36,
+  "sampleCount": 64000,
+  "lid": {
+    "requested": "CPU: аппаратный драйвер NNAPI не обнаружен",
+    "language": "ru",
+    "succeeded": true,
+    "elapsedMs": 1569,
+    "fallbacks": [],
+    "evidence": "CPU: аппаратный драйвер NNAPI не обнаружен. Выполнений узлов NNAPI: 0; CPU: 974"
+  },
+  "asr": {
+    "requested": "CPU: аппаратный драйвер NNAPI не обнаружен",
+    "text": "1, 2, 3, 4, 5, 6, 6",
+    "succeeded": true,
+    "elapsedMs": 2268,
+    "fallbacks": [],
+    "evidence": "CPU: аппаратный драйвер NNAPI не обнаружен. Выполнений узлов NNAPI: 0; CPU: 172"
+  },
+  "diarization": {
+    "requested": "CPU: аппаратный драйвер NNAPI не обнаружен",
+    "segments": 2,
+    "succeeded": true,
+    "elapsedMs": 488,
+    "fallbacks": [],
+    "evidence": "CPU: аппаратный драйвер NNAPI не обнаружен. Выполнений узлов NNAPI: 0; CPU: 58"
+  }
+}

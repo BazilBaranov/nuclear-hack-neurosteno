@@ -1,0 +1,134 @@
+{
+  "device": "HONOR ELI-NX9",
+  "sdk": 36,
+  "application_code_commit": "6a445ae37c1723bdc9c97675eccae4e3d47d90e3",
+  "build_type": "debug instrumentation",
+  "preflight": {
+    "busy": false,
+    "missingModels": [],
+    "activeNetworkPresent": false,
+    "activeNetworkIsVpn": false,
+    "physicalInternetNetworks": 0,
+    "airplaneModeEnabled": true,
+    "wifiEnabled": false,
+    "offlinePreconditionMet": true
+  },
+  "note": "Functional development fixtures; one run, not independent WER/DER validation.",
+  "speech": {
+    "inputSha256": "4c9b5b07df23ea50cc3123ebf41e9601e2560d9ba5ea181aff4cda3ac271576a",
+    "status": "completed",
+    "wallMs": 14179,
+    "audioDurationMs": 15125,
+    "rtf": 0.9374545454545454,
+    "language": "ru",
+    "stageMs": {
+      "decode": 33,
+      "enhancement": 1650,
+      "diarization": 1169,
+      "language": 993,
+      "asr": 2366,
+      "punctuation": 7495
+    },
+    "modelIds": [
+      "whisper-tiny-multilingual",
+      "gigaam-v3-rnnt-ru",
+      "diarization-pyannote-seg3",
+      "gtcrn-denoise",
+      "qwen3.5-0.8b-punctuation"
+    ],
+    "modelHashes": {
+      "whisper-tiny-multilingual": "d24fb083ae3b1041fc24e97971d60e280c9342201fbb67b0ab428a8b4a51a434,d2fece8dd42771f1df975c6c0445770d0c292bf7547c2cae04a6c0cc57540925,b34b360dbb493e781e479794586d661700670d65564001f23024971d1f2fa126",
+      "gigaam-v3-rnnt-ru": "0ec54e5f130a91c0f228d21795ede10b31c992a1f73e45dcd827e843a71a9b50,5d1cfef155d8e07f213bd2f3229b5f6c5c29355c7fa5c1b9eb62cb1925725254,fd1d02f45c2ad3d6b67cc149811ad794ab4b020ed49a0a9e2790a8619d1cddd8,17cc514451bcceac9c280068c71502f8448f99e9fb1456b8d0761651fd0392f2",
+      "diarization-pyannote-seg3": "d582f4b4c6b48205de7e0643c57df0df5615a3c176189be3fc461e9d18827b5d,ad4a1802485d8b34c722d2a9d04249662f2ece5d28a7a039063ca22f515a789e",
+      "gtcrn-denoise": "e77603ac0c23dac3227dd2d7135b3a585cbee2679048aecfa886657d3ae1b534",
+      "qwen3.5-0.8b-punctuation": "bd258782e35f7f458f8aced1adc053e6e92e89bc735ba3be89d38a06121dc517"
+    },
+    "runtimeEvidenceAndWarnings": [
+      "speaker clustering is automatic and not calibrated; counts may be over- or under-estimated on this audio",
+      "removed 1 turns with empty ASR output",
+      "CPU",
+      "CPU: аппаратный драйвер NNAPI не обнаружен",
+      "CPU: аппаратный драйвер NNAPI не обнаружен",
+      "CPU: аппаратный драйвер NNAPI не обнаружен"
+    ]
+  },
+  "ami": {
+    "inputSha256": "2c476ba3e6c7cf0bad823962c025c9fa4bd877d392a1fc839dd2189a25b77b36",
+    "status": "completed",
+    "wallMs": 109805,
+    "audioDurationMs": 60000,
+    "rtf": 1.8300833333333333,
+    "language": "en",
+    "stageMs": {
+      "decode": 127,
+      "enhancement": 5578,
+      "diarization": 59379,
+      "language": 979,
+      "asr": 21279,
+      "punctuation": 22082
+    },
+    "modelIds": [
+      "whisper-tiny-multilingual",
+      "whisper-base-multilingual",
+      "diarization-nemotron-3",
+      "gtcrn-denoise",
+      "voxlock-isolation",
+      "qwen3.5-0.8b-punctuation"
+    ],
+    "modelHashes": {
+      "whisper-tiny-multilingual": "d24fb083ae3b1041fc24e97971d60e280c9342201fbb67b0ab428a8b4a51a434,d2fece8dd42771f1df975c6c0445770d0c292bf7547c2cae04a6c0cc57540925,b34b360dbb493e781e479794586d661700670d65564001f23024971d1f2fa126",
+      "whisper-base-multilingual": "0b8fb1304b6109976038efff5ace81720e00386f3ff6b54ee8c75291ca0a1e11,9759d217388a01b3a4c7c15533201067b48ae819c4daafc8624e64b9409dc02d,b34b360dbb493e781e479794586d661700670d65564001f23024971d1f2fa126",
+      "diarization-nemotron-3": "08456d9e22cd9a323c0364d98375f3746d6e68507ebb705cd46438c534c7a3a1",
+      "gtcrn-denoise": "e77603ac0c23dac3227dd2d7135b3a585cbee2679048aecfa886657d3ae1b534",
+      "voxlock-isolation": "5d06048c156bb8cd422d29848e6d38fb26a7b39f6f7fd92eccf2a6ed1ce003c6,df61a9d0062b0adbcf1182302b1eb8b815f15ac47ea4923e8e164c1aff64121d",
+      "qwen3.5-0.8b-punctuation": "bd258782e35f7f458f8aced1adc053e6e92e89bc735ba3be89d38a06121dc517"
+    },
+    "runtimeEvidenceAndWarnings": [
+      "Одновременная речь: 3.226 с. Голоса выделены моделью VoxLock по чистым образцам этой записи; качество разделения требует проверки.",
+      "Диаризация Nemotron: качество разделения говорящих зависит от записи; проверьте короткие и одновременные реплики.",
+      "CPU",
+      "CPU: аппаратный драйвер NNAPI не обнаружен",
+      "CPU: аппаратный драйвер NNAPI не обнаружен",
+      "Ускорение диаризации: CPU"
+    ],
+    "diagnosticOnly": true,
+    "speakerCount": 2,
+    "overlappingOutputTurns": true,
+    "overlapReported": true,
+    "isolationUsed": true,
+    "explicitIsolationFallback": false
+  },
+  "silence": {
+    "inputSha256": "d303811b8c84619667cd0501342f84ec6cbe69f7aa3856dcf52fabda374c92b8",
+    "status": "completed",
+    "wallMs": 1624,
+    "audioDurationMs": 3000,
+    "rtf": 0.5413333333333333,
+    "language": null,
+    "stageMs": {
+      "decode": 155,
+      "enhancement": 416,
+      "diarization": 42,
+      "language": 644
+    },
+    "modelIds": [
+      "whisper-tiny-multilingual",
+      "diarization-pyannote-seg3",
+      "gtcrn-denoise"
+    ],
+    "modelHashes": {
+      "whisper-tiny-multilingual": "d24fb083ae3b1041fc24e97971d60e280c9342201fbb67b0ab428a8b4a51a434,d2fece8dd42771f1df975c6c0445770d0c292bf7547c2cae04a6c0cc57540925,b34b360dbb493e781e479794586d661700670d65564001f23024971d1f2fa126",
+      "diarization-pyannote-seg3": "d582f4b4c6b48205de7e0643c57df0df5615a3c176189be3fc461e9d18827b5d,ad4a1802485d8b34c722d2a9d04249662f2ece5d28a7a039063ca22f515a789e",
+      "gtcrn-denoise": "e77603ac0c23dac3227dd2d7135b3a585cbee2679048aecfa886657d3ae1b534"
+    },
+    "runtimeEvidenceAndWarnings": [
+      "CPU: аппаратный драйвер NNAPI не обнаружен",
+      "CPU: аппаратный драйвер NNAPI не обнаружен"
+    ]
+  },
+  "retry": {
+    "wallMs": 6227,
+    "status": "completed",
+    "revisionChanged": true
+  }
+}

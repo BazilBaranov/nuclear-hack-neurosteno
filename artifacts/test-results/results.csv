@@ -1,0 +1,7 @@
+test_id,device,build,audio_seconds,wall_seconds,rtf,status,scope
+speech,HONOR ELI-NX9 Android 16,debug,15.125,14.179,0.9374545454545454,passed,functional fixture; not WER/DER
+ami,HONOR ELI-NX9 Android 16,debug,60.0,109.805,1.8300833333333333,passed,functional fixture; not WER/DER
+silence,HONOR ELI-NX9 Android 16,debug,3.0,1.624,0.5413333333333333,passed,functional fixture; not WER/DER
+retry,HONOR ELI-NX9 Android 16,debug,,6.227,,passed,single turn; other turns preserved
+unit,host JVM,optimized unit,,,,223 passed,"0 failures, 0 skipped"
+honor-default,HONOR ELI-NX9 Android 16,debug,,,,passed,two independent Qwen CPU loads

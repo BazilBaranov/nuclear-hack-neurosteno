@@ -1,0 +1,281 @@
+{
+  "application_code_commit": "6a445ae37c1723bdc9c97675eccae4e3d47d90e3",
+  "unit": {
+    "tests": 223,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0
+  },
+  "suites": [
+    {
+      "name": "dev.neurostenografist.AsrBundleLayoutTest",
+      "tests": "8",
+      "failures": "0",
+      "errors": "0",
+      "skipped": "0",
+      "time": "0.046"
+    },
+    {
+      "name": "dev.neurostenografist.AudioDecoderTest",
+      "tests": "27",
+      "failures": "0",
+      "errors": "0",
+      "skipped": "0",
+      "time": "0.064"
+    },
+    {
+      "name": "dev.neurostenografist.ExportContractTest",
+      "tests": "3",
+      "failures": "0",
+      "errors": "0",
+      "skipped": "0",
+      "time": "0.02"
+    },
+    {
+      "name": "dev.neurostenografist.JobOwnershipTest",
+      "tests": "6",
+      "failures": "0",
+      "errors": "0",
+      "skipped": "0",
+      "time": "0.003"
+    },
+    {
+      "name": "dev.neurostenografist.MediaPcmTest",
+      "tests": "10",
+      "failures": "0",
+      "errors": "0",
+      "skipped": "0",
+      "time": "0.002"
+    },
+    {
+      "name": "dev.neurostenografist.ModelChoiceTest",
+      "tests": "6",
+      "failures": "0",
+      "errors": "0",
+      "skipped": "0",
+      "time": "0.002"
+    },
+    {
+      "name": "dev.neurostenografist.ModelStoreTest",
+      "tests": "8",
+      "failures": "0",
+      "errors": "0",
+      "skipped": "0",
+      "time": "0.063"
+    },
+    {
+      "name": "dev.neurostenografist.OverlapPlanTest",
+      "tests": "3",
+      "failures": "0",
+      "errors": "0",
+      "skipped": "0",
+      "time": "0.004"
+    },
+    {
+      "name": "dev.neurostenografist.PipelineTest",
+      "tests": "23",
+      "failures": "0",
+      "errors": "0",
+      "skipped": "0",
+      "time": "0.025"
+    },
+    {
+      "name": "dev.neurostenografist.PipelineUltraTest",
+      "tests": "3",
+      "failures": "0",
+      "errors": "0",
+      "skipped": "0",
+      "time": "0.011"
+    },
+    {
+      "name": "dev.neurostenografist.RecorderTest",
+      "tests": "4",
+      "failures": "0",
+      "errors": "0",
+      "skipped": "0",
+      "time": "0.003"
+    },
+    {
+      "name": "dev.neurostenografist.RecordingFinalizerClaimTest",
+      "tests": "4",
+      "failures": "0",
+      "errors": "0",
+      "skipped": "0",
+      "time": "0.0"
+    },
+    {
+      "name": "dev.neurostenografist.RunStartAdmissionTest",
+      "tests": "5",
+      "failures": "0",
+      "errors": "0",
+      "skipped": "0",
+      "time": "0.001"
+    },
+    {
+      "name": "dev.neurostenografist.RunStoreTest",
+      "tests": "20",
+      "failures": "0",
+      "errors": "0",
+      "skipped": "0",
+      "time": "0.03"
+    },
+    {
+      "name": "dev.neurostenografist.SettingsTest",
+      "tests": "5",
+      "failures": "0",
+      "errors": "0",
+      "skipped": "0",
+      "time": "0.0"
+    },
+    {
+      "name": "dev.neurostenografist.SourceStoreTest",
+      "tests": "7",
+      "failures": "0",
+      "errors": "0",
+      "skipped": "0",
+      "time": "0.012"
+    },
+    {
+      "name": "dev.neurostenografist.TimelineTest",
+      "tests": "12",
+      "failures": "0",
+      "errors": "0",
+      "skipped": "0",
+      "time": "0.004"
+    },
+    {
+      "name": "dev.neurostenografist.TranscriptJsonTest",
+      "tests": "7",
+      "failures": "0",
+      "errors": "0",
+      "skipped": "0",
+      "time": "0.002"
+    },
+    {
+      "name": "dev.neurostenografist.audio.Mp4MovieDurationTest",
+      "tests": "6",
+      "failures": "0",
+      "errors": "0",
+      "skipped": "0",
+      "time": "0.004"
+    },
+    {
+      "name": "dev.neurostenografist.audio.PcmTimelineTest",
+      "tests": "5",
+      "failures": "0",
+      "errors": "0",
+      "skipped": "0",
+      "time": "0.007"
+    },
+    {
+      "name": "dev.neurostenografist.audio.RecordingSessionTest",
+      "tests": "5",
+      "failures": "0",
+      "errors": "0",
+      "skipped": "0",
+      "time": "0.008"
+    },
+    {
+      "name": "dev.neurostenografist.audio.SpeechEnhancementTest",
+      "tests": "4",
+      "failures": "0",
+      "errors": "0",
+      "skipped": "0",
+      "time": "0.007"
+    },
+    {
+      "name": "dev.neurostenografist.audio.StreamingAudioTest",
+      "tests": "7",
+      "failures": "0",
+      "errors": "0",
+      "skipped": "0",
+      "time": "0.008"
+    },
+    {
+      "name": "dev.neurostenografist.inference.LocalPunctuationTest",
+      "tests": "6",
+      "failures": "0",
+      "errors": "0",
+      "skipped": "0",
+      "time": "0.004"
+    },
+    {
+      "name": "dev.neurostenografist.inference.NemotronOutputTest",
+      "tests": "3",
+      "failures": "0",
+      "errors": "0",
+      "skipped": "0",
+      "time": "0.003"
+    },
+    {
+      "name": "dev.neurostenografist.inference.OnnxAccelerationTest",
+      "tests": "4",
+      "failures": "0",
+      "errors": "0",
+      "skipped": "0",
+      "time": "0.001"
+    },
+    {
+      "name": "dev.neurostenografist.inference.OnnxSessionFallbackTest",
+      "tests": "4",
+      "failures": "0",
+      "errors": "0",
+      "skipped": "0",
+      "time": "0.002"
+    },
+    {
+      "name": "dev.neurostenografist.ui.CustomColorSchemeTest",
+      "tests": "4",
+      "failures": "0",
+      "errors": "0",
+      "skipped": "0",
+      "time": "0.013"
+    },
+    {
+      "name": "dev.neurostenografist.ui.RecorderTimerTest",
+      "tests": "4",
+      "failures": "0",
+      "errors": "0",
+      "skipped": "0",
+      "time": "0.001"
+    },
+    {
+      "name": "dev.neurostenografist.ui.ThemeTest",
+      "tests": "3",
+      "failures": "0",
+      "errors": "0",
+      "skipped": "0",
+      "time": "0.001"
+    },
+    {
+      "name": "dev.neurostenografist.ui.UserTextTest",
+      "tests": "7",
+      "failures": "0",
+      "errors": "0",
+      "skipped": "0",
+      "time": "0.001"
+    }
+  ],
+  "lint": {
+    "errors": 0,
+    "warnings": 10,
+    "warnings_suppressed_by_existing_baseline": 7
+  },
+  "ui_audio_device_checks": {
+    "passed": 20
+  },
+  "large_transcript_navigation": {
+    "passed": true,
+    "turns": 2000,
+    "iterations": 10,
+    "quantitative_jank_measurement": false,
+    "note": "Passed after unlocking. Two attempts with locked screen failed to find Compose hierarchy."
+  },
+  "honor_cpu_default_regression": {
+    "red_before_fix": true,
+    "green_after_fix": true,
+    "independent_qwen_loads": 2
+  },
+  "python_evaluation_self_checks": 4,
+  "apk_sha256": "517d13ddc5f4addc45468173fbffeb3d8d33648959a59be92db77737a6c7c63a"
+}
