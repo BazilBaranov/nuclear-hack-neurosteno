@@ -3,6 +3,7 @@
 </p>
 
 <p align="center">
+  <strong><a href="https://neurosteno-nuclear-hack.honey-kid-1285.chatgpt.site">Сайт проекта</a></strong> ·
   <strong><a href="https://github.com/BazilBaranov/nuclear-hack-neurosteno/releases/download/v0.1.0/neurosteno-arm64.apk">Скачать APK</a></strong> ·
   <strong><a href="artifacts/demo/neurosteno-demo.mp4">Смотреть видео</a></strong> ·
   <a href="docs/INSTALLATION.md">Начать работу</a> ·
@@ -37,8 +38,8 @@
 
 Настоящий экран Honor 200: модели → расшифровка → редактирование → JSON.
 Паузы смонтированы; участок обработки показан с исходной скоростью.
-Для локального просмотра материалов в оформлении страницы откройте
-**[docs/index.html](docs/index.html)** после клонирования репозитория.
+**[Открыть публичный сайт проекта](https://neurosteno-nuclear-hack.honey-kid-1285.chatgpt.site)** — видео, архитектура, тесты и инструкции без авторизации.
+Исходники и APK в Releases остаются приватными. [Сборка сайта](docs/SITE.md).
 
 <table>
   <tr><th>Модели на устройстве</th><th>Реплики и таймкоды</th><th>Редактирование</th></tr>
