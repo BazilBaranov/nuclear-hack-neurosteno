@@ -38,11 +38,11 @@ GigaAM-v3 и выбранный диаризатор. Для автоматич�
 ```bash
 ./scripts/build.sh :app:testOptimizedUnitTest :app:lintOptimized
 ./scripts/build.sh :app:assembleDebug :app:assembleDebugAndroidTest
-./scripts/verify-delivery.sh app/build/outputs/apk/optimized/app-optimized.apk
+./scripts/verify-delivery.sh app/build/outputs/apk/optimized/app-optimized.apk arm64-v8a
 ```
 
 Инструментационные проверки настоящих моделей требуют подготовленного телефона;
-offline-тесты дополнительно требуют отсутствия сети. См. [тестирование](docs/TESTING.md).
+offline-тесты дополнительно требуют отсутствия сети. См. [тестирование](docs/TESTING.md) и [результаты проверки переноса](docs/VALIDATION.md).
 
 ## Ускорение и ограничения
 
@@ -51,6 +51,8 @@ CPU — переносимый путь. Vulkan и NNAPI выбираются п
 не гарантирует совместимость графа или выигрыш скорости. GigaAM NNAPI на Pixel
 исполняет часть энкодера аппаратно, но известный холодный запуск медленнее CPU.
 Исправленный Nemotron Vulkan включён по умолчанию только на проверенном Pixel 9 Pro.
+На Honor 200 Qwen и Nemotron по умолчанию работают на CPU: проверенный Adreno-драйвер
+не выполнил эти модели через Vulkan, а аппаратный NNAPI-драйвер не обнаружен.
 
 - [Архитектура](docs/ARCHITECTURE.md)
 - [Модели](docs/MODELS.md), [лицензии моделей](docs/speech-model-licenses.md)

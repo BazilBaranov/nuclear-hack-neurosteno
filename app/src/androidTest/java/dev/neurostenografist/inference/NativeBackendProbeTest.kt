@@ -31,6 +31,19 @@ class NativeBackendProbeTest {
     @Test fun c_nemotronCpu() = diarization(false)
     @Test fun d_nemotronGpuRequested() = diarization(true)
 
+    @Test fun f_honorDefaultPunctuationAvoidsFailedVulkanDriver() {
+        assumeTrue("Honor 200 driver regression", Build.DEVICE == "HNELIX")
+        val bundle = ModelCatalog.byId(ModelCatalog.PUNCTUATION)
+        val file = File(context.filesDir, "models/${bundle.id}/${bundle.files.single().name}")
+        assertTrue("Provision verified Qwen before this regression", file.isFile)
+        repeat(2) {
+            LocalPunctuation(file).use { model ->
+                assertTrue("Honor default must avoid the failing Vulkan driver", model.backendReport.startsWith("CPU"))
+                assertEquals("Привет, как дела?", model.punctuate("привет как дела", "ru"))
+            }
+        }
+    }
+
     @Test fun e_agreementDetectsFalseSpeakersAndAcceptsRenaming() {
         val reference = listOf(SpeakerInterval(0, 0.0, 1.0), SpeakerInterval(1, 1.0, 2.0))
         val renamed = listOf(SpeakerInterval(7, 0.0, 1.0), SpeakerInterval(3, 1.0, 2.0))

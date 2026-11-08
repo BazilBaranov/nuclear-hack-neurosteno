@@ -1,5 +1,6 @@
 package dev.neurostenografist.inference
 
+import android.os.Build
 import java.io.File
 import java.util.Locale
 import java.util.concurrent.CancellationException
@@ -38,7 +39,8 @@ object PunctuationGuard {
 /** One real GGUF model per punctuation stage; call only from a worker dispatcher. */
 class LocalPunctuation(
     private val modelFile: File,
-    preferGpu: Boolean = true,
+    // Honor 200's tested Vulkan driver fails Qwen compute and can poison later GPU sessions.
+    preferGpu: Boolean = Build.DEVICE != "HNELIX",
     private val isCancelled: () -> Boolean = { false },
 ) : AutoCloseable {
     private var handle: Long
