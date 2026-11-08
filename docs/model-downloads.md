@@ -26,7 +26,7 @@
 
 ## Runtime и сборка
 
-Android 9 / API 28+, NDK **28.2.13676358**, CMake 3.22+, ABI arm64-v8a и x86_64. GGUF использует llama.cpp с Vulkan. ONNX использует локальный AAR **2.0.1-nnapi2** с NNAPI на arm64 и CPU на x86_64.
+Android 9 / API 28+, NDK **28.2.13676358**, CMake 3.22+, ABI arm64-v8a и x86_64. GGUF использует llama.cpp/ggml. Локальный AAR **2.0.1-nnapi3** включает NNAPI для обеих ABI. [Бэкенды по версиям Android](acceleration.md).
 
 Подготовка зависимостей описана в README и скриптах `scripts/prepare-deps.sh`, `scripts/prepare-nnapi.sh`, `scripts/prepare-vulkan-tools.sh`. NNAPI-сборка использует ORT 1.28.2 и закреплённые архивы. Современный host glslc необходим для текущих ggml shaders: версия из NDK r28c недостаточна, поэтому Vulkan-скрипт проверяет и локально распаковывает официальный пакет LunarG. `VULKAN_SDK` должен указывать на каталог с `bin/glslc`.
 

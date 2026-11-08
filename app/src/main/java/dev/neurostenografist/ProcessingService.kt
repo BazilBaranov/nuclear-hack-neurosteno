@@ -14,6 +14,11 @@ import dev.neurostenografist.core.Progress
 import dev.neurostenografist.core.RunStatus
 import dev.neurostenografist.data.RetryEvidence
 import dev.neurostenografist.inference.*
+import dev.neurostenografist.inference.litert.LiteRtDiarizer
+import dev.neurostenografist.inference.litert.LiteRtWhisperAsr
+import dev.neurostenografist.inference.litert.LiteRtWhisperSession
+import dev.neurostenografist.inference.litert.diarizeNemotronLiteRt
+import dev.neurostenografist.inference.litert.diarizePyannoteLiteRt
 import dev.neurostenografist.audio.AudioPreprocessor
 import dev.neurostenografist.ui.stageLabel
 import java.io.File
@@ -173,7 +178,6 @@ class ProcessingService : Service() {
                         .filter { it.kind == BundleKind.ASR && modelStore.isReady(it.id) }
                         .map { it.id }
                         .toSet()
-                val diarizerDir = modelStore.bundleDir(request.diarizationModelId)
                 val source = record.source
                 notify(Progress("decoding audio", null))
                 val decodeStart = System.currentTimeMillis()
@@ -184,15 +188,16 @@ class ProcessingService : Service() {
                 val backends = mutableListOf<OnnxBackend>()
                 val backendReports = mutableListOf<String>()
                 fun provider(stage: String): String = OnnxAcceleration.choose(this, stage).also { backends += it }.provider
-                val diarizer = createDiarizer(request.diarizationModelId, diarizerDir,
-                    if (request.diarizationModelId == ModelCatalog.DIARIZATION) provider("diarization") else "cpu"
-                ) { backendReports += "Диаризация: $it" }
+                val diarizer = prepareDiarizer(modelStore, request.diarizationModelId, { provider("diarization") }) {
+                    backendReports += it
+                }
                 val lid = if (requestedLanguage == null) object : LanguageDetector {
                     private var delegate: WhisperAutoLid? = null
+                    override val modelIds: Set<String> get() = delegate?.modelIds.orEmpty()
                     override fun detect(samples: FloatArray): String? {
-                        val engine = WhisperAutoLid(modelStore.bundleDir(ModelCatalog.WHISPER_TINY), provider("language")) {
-                            backendReports += "Определение языка: $it"
-                        }
+                        val report: (String) -> Unit = { backendReports += "Определение языка: $it" }
+                        val engine = WhisperAutoLid(modelStore.bundleDir(ModelCatalog.WHISPER_TINY), provider("language"), report)
+                        engine.liteRt = whisperLiteRt(modelStore, report)
                         delegate = engine
                         return engine.detect(samples)
                     }
@@ -221,8 +226,7 @@ class ProcessingService : Service() {
                         punctuationFactory = if (request.punctuation) ({ punctuation(modelStore) }) else null,
                         additionalModelIds = if (enhancementMs != null) listOf(ModelCatalog.DENOISE) else emptyList(),
                         initialStageMs = enhancementMs?.let { mapOf("enhancement" to it) }.orEmpty(),
-                        runtimeReports = { backendReports.distinct() + backends.map { OnnxAcceleration.evidence(it) } +
-                            if (diarizer is NemotronDiarizer) listOf(diarizer.backendReport) else emptyList() },
+                        runtimeReports = { backendReports.distinct() + backends.map { OnnxAcceleration.evidence(it) } },
                     ) { progress -> notify(progress) }
                 val completed = pipeline.execute()
                 // Cancellation that landed after the last stage check must still
@@ -275,13 +279,45 @@ class ProcessingService : Service() {
     }
 
     private fun punctuation(models: ModelStore): TextPunctuator {
-        val native = LocalPunctuation(File(models.bundleDir(ModelCatalog.PUNCTUATION),
-            ModelCatalog.byId(ModelCatalog.PUNCTUATION).files.single().name), isCancelled = ::isCancelled)
-        return object : TextPunctuator {
-            override val backendReport get() = native.backendReport
-            override fun punctuate(text: String, language: String) = native.punctuate(text, language)
-            override fun close() = native.close()
+        fun weights(id: String) = File(models.bundleDir(id), ModelCatalog.byId(id).files.single().name)
+        val cpuModel = weights(ModelCatalog.PUNCTUATION)
+        if (Build.VERSION.SDK_INT >= 34 && models.isReady(ModelCatalog.PUNCTUATION_LITERT)) {
+            return LiteRtPunctuation(weights(ModelCatalog.PUNCTUATION_LITERT), cpuModel, codeCacheDir, ::isCancelled)
         }
+        return LocalPunctuation(cpuModel, isCancelled = ::isCancelled)
+    }
+
+    private fun prepareDiarizer(
+        models: ModelStore,
+        id: String,
+        onnxProvider: () -> String,
+        report: (String) -> Unit,
+    ): Diarizer {
+        val bundle = models.bundleDir(id)
+        val liteRtId = if (id == ModelCatalog.NEMOTRON) ModelCatalog.NEMOTRON_LITERT else ModelCatalog.PYANNOTE_LITERT
+        fun fallback(): Diarizer {
+            val selected = createDiarizer(id, bundle, if (id == ModelCatalog.DIARIZATION) onnxProvider() else "cpu", report)
+            if (selected !is NemotronDiarizer) return selected
+            return object : Diarizer {
+                override fun diarize(samples: FloatArray) = selected.diarize(samples).also { report(selected.backendReport) }
+            }
+        }
+        if (Build.VERSION.SDK_INT < 34 || !models.isReady(liteRtId)) return fallback()
+        val dir = models.bundleDir(liteRtId)
+        return LiteRtDiarizer(liteRtId, { samples ->
+            if (liteRtId == ModelCatalog.NEMOTRON_LITERT) diarizeNemotronLiteRt(dir, samples, ::checkCancellation)
+            else diarizePyannoteLiteRt(this, dir, samples, ::checkCancellation)
+        }, ::fallback, report)
+    }
+
+    private fun whisperLiteRt(models: ModelStore, report: (String) -> Unit): LiteRtWhisperSession? {
+        if (Build.VERSION.SDK_INT < 34 || !models.isReady(ModelCatalog.WHISPER_TINY_LITERT)) return null
+        return LiteRtWhisperSession(
+            models.bundleDir(ModelCatalog.WHISPER_TINY_LITERT),
+            File(models.bundleDir(ModelCatalog.WHISPER_TINY), "tiny-tokens.txt"),
+            ::checkCancellation,
+            report,
+        )
     }
 
     private fun prepareAsr(
@@ -291,10 +327,17 @@ class ProcessingService : Service() {
         provider: String,
         onBackendReport: (String) -> Unit,
     ): Asr {
-        if (modelId == ModelCatalog.GIGAAM_V3 && provider.substringBefore(':') == "nnapi") {
-            notify(Progress("Подготовка энкодера GigaAM для NNAPI", null))
+        val directory = models.bundleDir(modelId)
+        if (modelId == ModelCatalog.WHISPER_TINY) {
+            whisperLiteRt(models, onBackendReport)?.let { session ->
+                return LiteRtWhisperAsr(session, language) { SherpaAsr(modelId, directory, language, "cpu", onBackendReport) }
+            }
         }
-        return SherpaAsr(modelId, models.bundleDir(modelId), language, provider, onBackendReport)
+        if (modelId == ModelCatalog.GIGAAM_V3 && provider == "nnapi") {
+            return GigaAmPreparation.acquire(directory, onBackendReport)
+                ?: SherpaAsr(modelId, directory, language, "cpu", onBackendReport)
+        }
+        return SherpaAsr(modelId, directory, language, provider, onBackendReport)
     }
 
     /** Existing completed result is untouched unless the entire replacement succeeds. */
@@ -314,7 +357,7 @@ class ProcessingService : Service() {
             val request = record.request
             val hasOverlap = OverlapPlan.hasOverlap(expected, completed.turns)
             val needsIsolation = request.separateOverlappingSpeech && hasOverlap
-            val used = listOf(asrId) + ModelCatalog.optionalModelIds(request, hasOverlap)
+            val used = (listOf(asrId) + ModelCatalog.optionalModelIds(request, hasOverlap)).toMutableSet()
             requireReadyModels(used)
             notify(Progress("decoding audio", null))
             var stageStart = android.os.SystemClock.elapsedRealtime()
@@ -342,7 +385,10 @@ class ProcessingService : Service() {
                         notify(Progress("transcribing", i.toFloat() / chunks.size))
                         asr.transcribe(audio)
                     }.joinToString(" ").trim()
-                } finally { asr.close() }
+                } finally {
+                    used += asr.modelIds
+                    asr.close()
+                }
             } finally { isolation?.close() }
             timings["asr"] = android.os.SystemClock.elapsedRealtime() - stageStart
             require(text.isNotBlank()) { "Речь не распознана. Исходный текст сохранён." }
@@ -351,7 +397,11 @@ class ProcessingService : Service() {
                 notify(Progress("punctuating", null))
                 stageStart = android.os.SystemClock.elapsedRealtime()
                 val candidate = punctuation(models).use { punctuator ->
-                    punctuator.punctuate(text, language).also { reports += punctuator.backendReport }
+                    punctuator.punctuate(text, language).also {
+                        used.remove(ModelCatalog.PUNCTUATION)
+                        used += punctuator.modelIds
+                        reports += punctuator.backendReport
+                    }
                 }
                 timings["punctuation"] = android.os.SystemClock.elapsedRealtime() - stageStart
                 PunctuationGuard.accept(text, candidate)
@@ -359,7 +409,7 @@ class ProcessingService : Service() {
             reports += OnnxAcceleration.evidence(backend)
             checkCancellation()
             store.editTurn(runId, index, expected, expected.copy(text = edited),
-                RetryEvidence(used, used.associateWith { id -> ModelCatalog.byId(id).files.joinToString(",") { it.sha256 } }, timings,
+                RetryEvidence(used.toList(), used.associateWith { id -> ModelCatalog.byId(id).files.joinToString(",") { it.sha256 } }, timings,
                     reports.map { "Повтор реплики: $it" }))
             AppGraph.recordError = "Реплика распознана повторно"
         } catch (failure: Exception) {

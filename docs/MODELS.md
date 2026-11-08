@@ -21,8 +21,8 @@
 
 ## Вычислители и зависимости
 
-- ONNX: локальный AAR `com.k2fsa.sherpa:onnx:2.0.1-nnapi2` использует sherpa 2.0.1 с ORT 1.28.2. Энкодер GigaAM может работать через NNAPI на ARM64. Декодер и joiner используют CPU. При отказе NNAPI операция повторяется на CPU.
-- GGUF: Qwen поддерживает CPU/Vulkan. Nemotron по умолчанию запрашивает исправленный Vulkan-путь на Pixel 9 Pro. При перехватываемом отказе выполняется повтор на CPU.
+- ONNX: локальный AAR `com.k2fsa.sherpa:onnx:2.0.1-nnapi3` включает sherpa 2.0.1 и ORT 1.28.2. NNAPI используется до Android 13 включительно.
+- Дополнительные веса LiteRT для Android 14+ скачиваются отдельно. [Совместимые модели и фолбеки](acceleration.md).
 - Платформа: Android API 28+, NDK 28.2.13676358, arm64-v8a/x86_64. Детали порта: [nemotron-android.md](nemotron-android.md), [local-llm-runtime.md](local-llm-runtime.md).
 
 Модель на GPU не обязательно быстрее CPU; наличие NNAPI не даёт одинакового результата на Qualcomm, MediaTek и Google Tensor. Скорость, память, качество и offline acceptance относятся к конкретным измерениям в [протоколе проверки](VALIDATION.md). Исторические результаты прежней CPU-only сборки не подтверждают новую GPU/LLM-сборку.

@@ -4,8 +4,7 @@
 
 int main(int argc, char** argv) {
     if (argc != 2) throw std::invalid_argument("Pass the pinned Qwen GGUF path");
-    neuro::LocalLlm model(argv[1], false, 2);
-    if (model.backend_report() != "CPU") throw std::runtime_error("CPU selection not honored");
+    neuro::LocalLlm model(argv[1], 2);
     bool cancelled = false;
     int cancellation_checks = 0;
     try { model.generate("Count from 1 to 1000", 16, [&] { return ++cancellation_checks >= 4; }); }
@@ -15,7 +14,7 @@ int main(int argc, char** argv) {
         "Add punctuation to the following Russian text. Return the same words with commas, periods, and question marks.\nпривет как дела",
         64, [] { return false; });
     if (answer != "Привет, как дела?") throw std::runtime_error("Russian punctuation fixture failed: " + answer);
-    std::cout << "backend=" << model.backend_report() << "\nanswer=" << answer << "\n";
+    std::cout << "backend=CPU\nanswer=" << answer << "\n";
     const auto second = model.generate("Return exactly: OK", 16, [] { return false; });
     if (second.find("OK") == std::string::npos) throw std::runtime_error("Context reset or second generation failed");
     const auto english = model.generate(

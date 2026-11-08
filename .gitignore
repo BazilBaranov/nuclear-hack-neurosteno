@@ -13,6 +13,8 @@ artifacts/*
 
 # Local models and credentials
 *.onnx
+*.litertlm
+*.tflite
 *.gguf
 *.nemo
 *.safetensors

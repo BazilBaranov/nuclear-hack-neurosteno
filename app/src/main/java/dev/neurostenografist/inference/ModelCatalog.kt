@@ -37,6 +37,7 @@ enum class BundleKind {
     LLM,
     ENHANCEMENT,
     ISOLATION,
+    ACCELERATION,
 }
 
 data class ModelBundle(
@@ -77,9 +78,13 @@ object ModelCatalog {
     const val DIARIZATION = "diarization-pyannote-seg3"
     const val GIGAAM_V3 = "gigaam-v3-rnnt-ru"
     const val PUNCTUATION = "qwen3.5-0.8b-punctuation"
+    const val PUNCTUATION_LITERT = "qwen3.5-0.8b-punctuation-litert"
     private const val LEGACY_PUNCTUATION = "qwen2.5-0.5b-punctuation"
     const val DENOISE = "gtcrn-denoise"
     const val ISOLATION = "voxlock-isolation"
+    const val WHISPER_TINY_LITERT = "whisper-tiny-litert"
+    const val PYANNOTE_LITERT = "pyannote-wespeaker-litert"
+    const val NEMOTRON_LITERT = "diarization-nemotron-3-litert"
     const val NEMOTRON = "diarization-nemotron-3"
 
     // Pinned public HTTPS revisions (Hugging Face `resolve/<sha>`). Hashes/sizes were
@@ -112,6 +117,52 @@ object ModelCatalog {
                 downloadBaseUrl = "https://huggingface.co/unsloth/Qwen3.5-0.8B-GGUF/resolve/ed4bdcdbcce9f095bb49e8759176c64e45fa294b",
                 files = listOf(BundleFile("Qwen3.5-0.8B-Q4_K_M.gguf",
                     "bd258782e35f7f458f8aced1adc053e6e92e89bc735ba3be89d38a06121dc517", 532_517_120)),
+            ),
+            ModelBundle(
+                id = PUNCTUATION_LITERT, kind = BundleKind.ACCELERATION,
+                displayName = "Пунктуация — Qwen 3.5 0.8B LiteRT (Android 14+)",
+                languages = supportedLanguages, assetDir = "models/punctuation-litert",
+                downloadBaseUrl = "https://huggingface.co/litert-community/Qwen3.5-0.8B/resolve/48d30958f97dffb6864d755d8ae342794d07556c",
+                files = listOf(BundleFile("Qwen3.5-0.8B_int8.litertlm",
+                    "25447e2550082aed6145bbc755ec4da5d535f98f6a0c386865fdae2ccb88aed1", 964_566_992)),
+            ),
+            ModelBundle(
+                id = WHISPER_TINY_LITERT, kind = BundleKind.ACCELERATION,
+                displayName = "Whisper tiny — LiteRT-энкодер (Android 14+)",
+                languages = supportedLanguages, assetDir = "models/whisper-lite",
+                downloadBaseUrl = "https://github.com/john-rocky/LiteRT-Models/releases/download/v2",
+                files = listOf(
+                    BundleFile("mel_filters.bin", "4f2701b1d287d74a0dc9871026e9519d98cb76426615f2539b0d151a0ae4ec2e", 64_320),
+                    BundleFile("vocab.json", "fb6fd3eb3a64a273b6ab0127adf0b3e317e21caa9a812edf87118e6f51bf10da", 987_090),
+                    BundleFile("whisper_decoder.onnx", "3d9c2997d206e575a1bc0e90297c28c1d26bf4490b60cbf43ac8becac61064f6", 198_806_743),
+                    BundleFile("whisper_encoder.tflite", "64c7c1585b416ab19cf026690c7632cd2987c37e635384bc4a5c176cd6e4253f", 32_926_152),
+                ),
+            ),
+            ModelBundle(
+                id = NEMOTRON_LITERT, kind = BundleKind.ACCELERATION,
+                displayName = "Nemotron 3 — LiteRT (Android 14+)",
+                languages = emptyList(), assetDir = "models/nemotron-lite",
+                downloadBaseUrl = "https://huggingface.co/litert-community/Nemotron-3-Diarization-LiteRT/resolve/c6e48fcb3519be365babc7bd74e3e0ae2dc5c855",
+                files = listOf(
+                    BundleFile("frontend_mel128_257.bin", "bce5ec5f194a5913f6508cee5a85512e7bad2352db8fc28f5c6ff75af8b09137", 131_584,
+                        "https://huggingface.co/litert-community/Nemotron-3-Diarization-LiteRT/resolve/c6e48fcb3519be365babc7bd74e3e0ae2dc5c855/assets/frontend_mel128_257.bin"),
+                    BundleFile("hann400.bin", "c427e2029118cf789649e5a4d439b6115d0dd0cbf95dcd22f65e3c848add8c5b", 1_600,
+                        "https://huggingface.co/litert-community/Nemotron-3-Diarization-LiteRT/resolve/c6e48fcb3519be365babc7bd74e3e0ae2dc5c855/assets/hann400.bin"),
+                    BundleFile("silence_embeds.bin", "d4417b3c0eabdf7c47032fac2b5b5a7ee83d819a6ddda8fd8eaf74e2b5cc4ac7", 2_048,
+                        "https://huggingface.co/litert-community/Nemotron-3-Diarization-LiteRT/resolve/c6e48fcb3519be365babc7bd74e3e0ae2dc5c855/assets/silence_embeds.bin"),
+                    BundleFile("nemotron3_diar_encoder_offline_fp16.tflite", "b312fd74b1931af83185d84f017dd330d0478887db7ccf6ff0e4b65ff0dda28b", 198_694_768),
+                    BundleFile("nemotron3_diar_frontend.tflite", "c01df58c31b425183c5a008552b517e53007fee39748baa2a4c49c1a55072810", 2_098_556),
+                ),
+            ),
+            ModelBundle(
+                id = PYANNOTE_LITERT, kind = BundleKind.ACCELERATION,
+                displayName = "Pyannote + WeSpeaker — LiteRT-эмбеддинги (Android 14+)",
+                languages = emptyList(), assetDir = "models/pyannote-lite",
+                downloadBaseUrl = "https://huggingface.co/litert-community/Speaker-Diarization-LiteRT/resolve/e42b3797b1f517063b05b84997926d27bede7628",
+                files = listOf(
+                    BundleFile("pyannote_seg30.onnx", "4c96c9adfae4ef83c07909cac98630c886255f8866b5807db39cf3e46572a8a2", 5_924_521),
+                    BundleFile("wespeaker_emb_fp16.tflite", "4853c284fdb3e39bd41f692d0bc3fd5068bf78782792d8ef02a3283c9d97554d", 13_352_192),
+                ),
             ),
             // Keep the ID valid for saved runs.
             ModelBundle(
@@ -270,7 +321,7 @@ object ModelCatalog {
             ModelBundle(
                 id = NEMOTRON,
                 kind = BundleKind.DIARIZATION,
-                displayName = "NVIDIA Nemotron-3-Diarization (CPU, Q8, до 8 говорящих)",
+                displayName = "NVIDIA Nemotron-3-Diarization (GGUF Q8, до 8 говорящих)",
                 languages = emptyList(),
                 assetDir = "models/nemotron-3",
                 downloadBaseUrl = "https://huggingface.co/nvidia/Nemotron-3-Diarization/resolve/f667ed73aee57d40cc39428eb768b4fd87a0a29e",

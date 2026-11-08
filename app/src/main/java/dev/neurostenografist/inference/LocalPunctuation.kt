@@ -1,6 +1,5 @@
 package dev.neurostenografist.inference
 
-import android.os.Build
 import java.io.File
 import java.util.Locale
 import java.util.concurrent.CancellationException
@@ -21,6 +20,13 @@ object PunctuationGuard {
         return result
     }
 
+    fun prompt(chunk: String, language: String): String {
+        // The small bilingual model follows this concise English instruction more reliably.
+        val languageName = if (language == "ru") "Russian" else "English"
+        return "Add punctuation to the following $languageName text. " +
+            "Return the same words with commas, periods, and question marks.\n$chunk"
+    }
+
     fun chunks(text: String): List<String> {
         val result = ArrayList<String>()
         var rest = text.trim()
@@ -38,25 +44,21 @@ object PunctuationGuard {
 
 /** One real GGUF model per punctuation stage; call only from a worker dispatcher. */
 class LocalPunctuation(
-    private val modelFile: File,
-    // Honor 200's tested Vulkan driver fails Qwen compute and can poison later GPU sessions.
-    preferGpu: Boolean = Build.DEVICE != "HNELIX",
+    modelFile: File,
     private val isCancelled: () -> Boolean = { false },
-) : AutoCloseable {
+) : TextPunctuator {
     private var handle: Long
-    var backendReport: String
-        private set
+    override val backendReport: String get() = "Пунктуация: CPU (GGUF)"
 
     init {
         require(modelFile.isFile) { "Модель пунктуации не найдена. Загрузите Qwen в разделе «Модели»." }
         System.loadLibrary("neuro_nemotron")
-        handle = nativeCreate(modelFile.absolutePath, preferGpu, HardwareAcceleration.cpuThreads())
+        handle = nativeCreate(modelFile.absolutePath, HardwareAcceleration.cpuThreads())
         check(handle != 0L) { "Не удалось загрузить локальную LLM" }
-        backendReport = nativeBackendReport(handle)
     }
 
     @Synchronized
-    fun punctuate(text: String, language: String): String {
+    override fun punctuate(text: String, language: String): String {
         check(handle != 0L) { "Модель пунктуации уже закрыта" }
         if (isCancelled()) throw CancellationException("Обработка отменена")
         if (text.isBlank()) return text
@@ -64,27 +66,12 @@ class LocalPunctuation(
         if (chunks.any { it.length > PunctuationGuard.MAX_CHARS }) return text
         return chunks.joinToString(" ") { chunk ->
             if (isCancelled()) throw CancellationException("Обработка отменена")
-            // The small bilingual model follows this concise English instruction more reliably.
-            val languageName = if (language == "ru") "Russian" else "English"
-            val prompt = "Add punctuation to the following $languageName text. " +
-                "Return the same words with commas, periods, and question marks.\n$chunk"
+            val prompt = PunctuationGuard.prompt(chunk, language)
             val generated = try {
                 nativeGenerate(handle, prompt.toByteArray(Charsets.UTF_8), 384).toString(Charsets.UTF_8)
             } catch (failure: IllegalStateException) {
                 if (isCancelled()) throw CancellationException("Обработка отменена")
-                if (!backendReport.startsWith("GPU ")) throw failure
-                // Free failed GPU buffers before retrying the same text on CPU.
-                nativeDestroy(handle)
-                handle = 0L
-                handle = nativeCreate(modelFile.absolutePath, false, HardwareAcceleration.cpuThreads())
-                check(handle != 0L) { "Не удалось повторить пунктуацию на CPU" }
-                backendReport = nativeBackendReport(handle) + "; ошибка вычисления GPU, повтор на CPU"
-                try {
-                    nativeGenerate(handle, prompt.toByteArray(Charsets.UTF_8), 384).toString(Charsets.UTF_8)
-                } catch (cpuFailure: IllegalStateException) {
-                    if (isCancelled()) throw CancellationException("Обработка отменена")
-                    throw cpuFailure
-                }
+                throw failure
             }
             if (isCancelled()) throw CancellationException("Обработка отменена")
             PunctuationGuard.accept(chunk, generated)
@@ -103,8 +90,7 @@ class LocalPunctuation(
         }
     }
 
-    private external fun nativeCreate(path: String, preferGpu: Boolean, threads: Int): Long
-    private external fun nativeBackendReport(handle: Long): String
+    private external fun nativeCreate(path: String, threads: Int): Long
     private external fun nativeGenerate(handle: Long, prompt: ByteArray, maxTokens: Int): ByteArray
     private external fun nativeDestroy(handle: Long)
 }

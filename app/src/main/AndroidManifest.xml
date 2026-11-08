@@ -19,6 +19,9 @@
         android:supportsRtl="true"
         android:theme="@android:style/Theme.Material.Light.NoActionBar">
 
+        <!-- LiteRT-LM GPU on Android uses OpenCL, when exposed by the driver. -->
+        <uses-native-library android:name="libOpenCL.so" android:required="false" />
+
         <!-- No configChanges: real recreation must happen (tests and state retention). -->
         <activity
             android:name=".MainActivity"

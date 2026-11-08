@@ -1,13 +1,37 @@
 #!/usr/bin/env bash
-# Build the pinned sherpa runtime with NNAPI enabled for arm64, retaining CPU x86_64.
+# Build the pinned sherpa runtime with NNAPI and the matching ORT Java bindings.
 set -euo pipefail
 repo="$(cd "$(dirname "$0")/.." && pwd)"
 work="${NEURO_NNAPI_CACHE:-$repo/.gradle/nnapi}"
 ndk="${ANDROID_NDK_HOME:-${ANDROID_HOME:?Set ANDROID_HOME}/ndk/28.2.13676358}"
 source_dir="$work/source"
 ort_dir="$work/ort"
-build_dir="$work/arm64"
+version=2.0.1-nnapi3
 mkdir -p "$work"
+exec 9>"$work/prepare.lock"
+flock 9
+
+build_key="$(
+  sha256sum "$repo/scripts/"{prepare-nnapi.sh,prepare-deps.sh,patch-sherpa-jni.py,patch-sherpa-gigaam.py,nnapi-probe.cpp} "$ndk/source.properties" \
+    | cut -d' ' -f1 | sha256sum | cut -d' ' -f1
+)"
+destination="$repo/libs/repo/com/k2fsa/sherpa/onnx/$version"
+if python3 - "$destination" "$version" "$build_key" <<'PY_CACHE'
+import hashlib, json, sys
+from pathlib import Path
+directory, version, key = sys.argv[1:]
+path = Path(directory)
+try:
+    manifest = json.loads((path / 'build-manifest.json').read_text())
+    assert manifest['build_key'] == key and (path / f'onnx-{version}.pom').is_file()
+    assert hashlib.sha256((path / f'onnx-{version}.aar').read_bytes()).hexdigest() == manifest['aar_sha256']
+except (OSError, ValueError, KeyError, AssertionError):
+    sys.exit(1)
+PY_CACHE
+then
+  echo "NNAPI artifact already verified: $destination"
+  exit 0
+fi
 
 fetch() {
   local url="$1" destination="$2" digest="$3"
@@ -52,44 +76,54 @@ PY
 python3 "$repo/scripts/patch-sherpa-jni.py" "$source_dir"
 python3 "$repo/scripts/patch-sherpa-gigaam.py" "$source_dir"
 
-SHERPA_ONNXRUNTIME_INCLUDE_DIR="$ort_dir/headers" \
-SHERPA_ONNXRUNTIME_LIB_DIR="$ort_dir/jni/arm64-v8a" \
-cmake -S "$source_dir" -B "$build_dir" \
-  -DCMAKE_TOOLCHAIN_FILE="$ndk/build/cmake/android.toolchain.cmake" \
-  -DANDROID_ABI=arm64-v8a -DANDROID_PLATFORM=android-27 -DANDROID_STL=c++_static \
-  -DCMAKE_BUILD_TYPE=Release -DBUILD_SHARED_LIBS=ON \
-  -DCMAKE_SHARED_LINKER_FLAGS=-Wl,-z,max-page-size=16384 \
-  -DSHERPA_ONNX_ENABLE_JNI=ON -DSHERPA_ONNX_ENABLE_PYTHON=OFF \
-  -DSHERPA_ONNX_ENABLE_BINARY=OFF -DSHERPA_ONNX_ENABLE_C_API=OFF \
-  -DSHERPA_ONNX_ENABLE_TTS=OFF -DSHERPA_ONNX_ENABLE_PORTAUDIO=OFF \
-  -DSHERPA_ONNX_ENABLE_TESTS=OFF -DSHERPA_ONNX_ENABLE_CHECK=OFF \
-  -DSHERPA_ONNX_ENABLE_WEBSOCKET=OFF -DSHERPA_ONNX_ENABLE_SPEAKER_DIARIZATION=ON
-cmake --build "$build_dir" --target sherpa-onnx-jni -j2
+for abi in arm64-v8a x86_64; do
+  build_dir="$work/$abi"
+  target=aarch64-linux-android
+  [[ "$abi" != x86_64 ]] || target=x86_64-linux-android
+  SHERPA_ONNXRUNTIME_INCLUDE_DIR="$ort_dir/headers" \
+  SHERPA_ONNXRUNTIME_LIB_DIR="$ort_dir/jni/$abi" \
+  cmake -S "$source_dir" -B "$build_dir" \
+    -DCMAKE_TOOLCHAIN_FILE="$ndk/build/cmake/android.toolchain.cmake" \
+    -DANDROID_ABI="$abi" -DANDROID_PLATFORM=android-27 -DANDROID_STL=c++_static \
+    -DCMAKE_BUILD_TYPE=Release -DBUILD_SHARED_LIBS=ON \
+    -DCMAKE_SHARED_LINKER_FLAGS=-Wl,-z,max-page-size=16384 \
+    -DSHERPA_ONNX_ENABLE_JNI=ON -DSHERPA_ONNX_ENABLE_PYTHON=OFF \
+    -DSHERPA_ONNX_ENABLE_BINARY=OFF -DSHERPA_ONNX_ENABLE_C_API=OFF \
+    -DSHERPA_ONNX_ENABLE_TTS=OFF -DSHERPA_ONNX_ENABLE_PORTAUDIO=OFF \
+    -DSHERPA_ONNX_ENABLE_TESTS=OFF -DSHERPA_ONNX_ENABLE_CHECK=OFF \
+    -DSHERPA_ONNX_ENABLE_WEBSOCKET=OFF -DSHERPA_ONNX_ENABLE_SPEAKER_DIARIZATION=ON
+  cmake --build "$build_dir" --target sherpa-onnx-jni --parallel "${NEURO_NNAPI_JOBS:-4}"
 
-bin="$ndk/toolchains/llvm/prebuilt/linux-x86_64/bin"
-"$bin/aarch64-linux-android27-clang++" -shared -fPIC -O2 -static-libstdc++ \
-  -fvisibility=hidden -ffunction-sections -fdata-sections \
-  -Wl,--gc-sections -Wl,--exclude-libs,ALL -Wl,-z,max-page-size=16384 \
-  "$repo/scripts/nnapi-probe.cpp" -ldl -o "$build_dir/lib/libneuro_nnapi_probe.so"
-"$bin/llvm-strip" --strip-debug "$build_dir/lib/libsherpa-onnx-jni.so"
-"$bin/llvm-strip" --strip-debug "$build_dir/lib/libneuro_nnapi_probe.so"
+  bin="$ndk/toolchains/llvm/prebuilt/linux-x86_64/bin"
+  "$bin/${target}27-clang++" -shared -fPIC -O2 -static-libstdc++ \
+    -fvisibility=hidden -ffunction-sections -fdata-sections \
+    -Wl,--gc-sections -Wl,--exclude-libs,ALL -Wl,-z,max-page-size=16384 \
+    "$repo/scripts/nnapi-probe.cpp" -ldl -o "$build_dir/lib/libneuro_nnapi_probe.so"
+  "$bin/llvm-strip" --strip-debug "$build_dir/lib/libsherpa-onnx-jni.so"
+  "$bin/llvm-strip" --strip-debug "$build_dir/lib/libneuro_nnapi_probe.so"
+done
 "$repo/scripts/prepare-deps.sh"
 
-python3 - "$repo" "$build_dir" "$ort_dir" <<'PY'
+python3 - "$repo" "$work" "$ort_dir" "$version" "$build_key" <<'PY'
 from pathlib import Path
 import hashlib, json, sys, zipfile
-repo, build, ort = map(Path, sys.argv[1:])
-version = '2.0.1-nnapi2'
+repo, work, ort = map(Path, sys.argv[1:4])
+version, build_key = sys.argv[4:]
 base = repo / 'libs/repo/com/k2fsa/sherpa/onnx'
 destination = base / version
 destination.mkdir(parents=True, exist_ok=True)
 original = base / '2.0.1/onnx-2.0.1.aar'
 aar = destination / f'onnx-{version}.aar'
-replacements = {
-    'jni/arm64-v8a/libsherpa-onnx-jni.so': build / 'lib/libsherpa-onnx-jni.so',
-    'jni/arm64-v8a/libonnxruntime.so': ort / 'jni/arm64-v8a/libonnxruntime.so',
-    'jni/arm64-v8a/libneuro_nnapi_probe.so': build / 'lib/libneuro_nnapi_probe.so',
-}
+abis = ('arm64-v8a', 'x86_64')
+replacements = {'libs/onnxruntime.jar': ort / 'classes.jar'}
+for abi in abis:
+    replacements.update({
+        f'jni/{abi}/libsherpa-onnx-jni.so': work / abi / 'lib/libsherpa-onnx-jni.so',
+        f'jni/{abi}/libonnxruntime.so': ort / 'jni' / abi / 'libonnxruntime.so',
+        f'jni/{abi}/libonnxruntime4j_jni.so': ort / 'jni' / abi / 'libonnxruntime4j_jni.so',
+        f'jni/{abi}/libneuro_nnapi_probe.so': work / abi / 'lib/libneuro_nnapi_probe.so',
+    })
+
 temporary = aar.with_suffix('.aar.tmp')
 with zipfile.ZipFile(original) as source, zipfile.ZipFile(temporary, 'w', compression=zipfile.ZIP_DEFLATED) as target:
     for entry in source.infolist():
@@ -108,7 +142,8 @@ pom = destination / f'onnx-{version}.pom'
 pom.write_text(f'<project><modelVersion>4.0.0</modelVersion><groupId>com.k2fsa.sherpa</groupId><artifactId>onnx</artifactId><version>{version}</version><packaging>aar</packaging></project>\n')
 for path in (aar, pom):
     path.with_suffix(path.suffix + '.sha1').write_text(hashlib.sha1(path.read_bytes()).hexdigest())
-manifest = {'sherpa': '2.0.1', 'onnxruntime': '1.28.2', 'arm64_api': 27, 'nnapi_cpu_disabled': True,
+manifest = {'sherpa': '2.0.1', 'onnxruntime': '1.28.2', 'android_api': 27, 'nnapi_abis': list(abis), 'nnapi_cpu_disabled': True,
+            'build_key': build_key,
             'aar_sha256': hashlib.sha256(aar.read_bytes()).hexdigest(),
             'probe_sha256': hashlib.sha256((repo/'scripts/nnapi-probe.cpp').read_bytes()).hexdigest(),
             'jni_patch_sha256': hashlib.sha256((repo/'scripts/patch-sherpa-jni.py').read_bytes()).hexdigest(),

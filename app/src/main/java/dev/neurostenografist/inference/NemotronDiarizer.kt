@@ -7,8 +7,8 @@ import java.io.File
 /** NeMo-Speech.cpp Sortformer with one recurrent speaker cache per recording. */
 class NemotronDiarizer(
     bundleDir: File,
-    // The corrected Vulkan path was compared with CPU on Pixel 9 Pro (Mali-G715).
-    private val preferGpu: Boolean = Build.DEVICE == "caiman",
+    // Vulkan is the Android 14+ fallback when the LiteRT graphs are unavailable.
+    private val preferGpu: Boolean = Build.VERSION.SDK_INT >= 34,
 ) : Diarizer {
     private val model = File(bundleDir, "Nemotron-3-Diarization.q8_0.gguf")
 

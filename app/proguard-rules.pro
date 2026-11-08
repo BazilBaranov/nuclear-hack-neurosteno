@@ -5,3 +5,8 @@
 -keepclassmembers class dev.neurostenografist.inference.LocalPunctuation {
     boolean isCancellationRequested();
 }
+
+# LiteRT-LM looks up this exception by name when a native backend fails.
+-keep class com.google.ai.edge.litertlm.LiteRtLmJniException { *; }
+# The locally packaged ONNX Runtime Java API uses JNI callbacks by class and member name.
+-keep class ai.onnxruntime.** { *; }

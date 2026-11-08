@@ -1,16 +1,16 @@
 # ONNX: CPU и аппаратный NNAPI
 
 `scripts/prepare-nnapi.sh` собирает локальный Maven-артефакт
-`com.k2fsa.sherpa:onnx:2.0.1-nnapi2`. Нужны Linux x86_64, CMake, Python 3,
+`com.k2fsa.sherpa:onnx:2.0.1-nnapi3`. Нужны Linux x86_64, CMake, Python 3,
 curl, Android NDK 28.2.13676358 и `ANDROID_HOME` (либо `ANDROID_NDK_HOME`).
 Кэш задаётся `NEURO_NNAPI_CACHE`; по умолчанию `.gradle/nnapi`.
 
 Исходники sherpa 2.0.1 и бинарный ONNX Runtime 1.28.2 проверяются по SHA-256.
-Arm64 JNI пересобирается для Android API 27 с выравниванием ELF 16 КБ.
+JNI для arm64-v8a и x86_64 пересобирается для Android API 27 с выравниванием ELF 16 КБ.
 Это существенно: исходный sherpa AAR собран с API 21, поэтому его ветка
 NNAPI исключена препроцессором. Kotlin API сохраняется без изменений.
-Остальные ABI сохраняются из исходного AAR и используют CPU.
-Контрольная сумма результата хранится рядом с AAR в `build-manifest.json`.
+В AAR включены соответствующие Java-привязки ONNX Runtime для гибридных моделей.
+Контрольная сумма и отпечаток сборки хранятся в `build-manifest.json`. Повторный запуск проверяет их и переиспользует готовый AAR.
 
 В сборке NNAPI установлен `NNAPI_FLAG_CPU_DISABLED`: эталонный CPU-драйвер
 NNAPI не выдаётся за GPU/NPU. ONNX Runtime по-прежнему может выполнять
@@ -20,7 +20,7 @@ NNAPI не выдаётся за GPU/NPU. ONNX Runtime по-прежнему м�
 Ошибки CPU и отмена не маскируются. Патч JNI переводит исключения C++ в
 Java для файловых LID/диаризации; ASR уже содержит такие обработчики upstream.
 
-## GigaAM-v3 RNNT на Pixel 9 Pro
+## Исторический замер GigaAM-v3 RNNT на Pixel 9 Pro
 
 Драйвер `google-edgetpu` отклоняет все три графа GigaAM с исходным набором
 флагов. Для энкодера GigaAM разрешена релаксация FP32 до FP16, а декодер
@@ -35,11 +35,10 @@ Java для файловых LID/диаризации; ASR уже содержи
 
 ## Обнаружение и профилирование
 
-`OnnxAcceleration` запрашивает NNAPI только для arm64, Android 10+ и при
-наличии драйвера типа GPU/ACCELERATOR. Список драйверов получен через публичный
-NDK API, а не по названию процессора. Snapdragon, MediaTek и Google используют
-один путь обнаружения; само наличие драйвера не доказывает выполнение модели
-на ускорителе и не гарантирует ускорение.
+В v0.2 NNAPI используется на Android 9–13. Android 10–13 запрашивает провайдер,
+если публичный NDK API обнаружил драйвер GPU или ACCELERATOR. На Android 9
+приложение делает запрос без инвентаризации. На Android 14+ ONNX Runtime
+исполняет оставшиеся ONNX-графы на CPU. [Матрица бэкендов](acceleration.md).
 
 Профилирование включается явно: `choose(..., diagnostic = true)`.
 После закрытия сессий `evidence()` считает события исполнения узлов

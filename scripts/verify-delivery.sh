@@ -62,30 +62,29 @@ for expected in "$@"; do
   unzip -Z1 "$APK" "lib/$expected/libneuro_nemotron.so" >/dev/null 2>&1 || fail "Nemotron runtime missing for $expected"
   unzip -Z1 "$APK" "lib/$expected/libsherpa-onnx-jni.so" >/dev/null 2>&1 || fail "ONNX JNI missing for $expected"
   unzip -Z1 "$APK" "lib/$expected/libonnxruntime.so" >/dev/null 2>&1 || fail "ONNX runtime missing for $expected"
+  unzip -Z1 "$APK" "lib/$expected/libonnxruntime4j_jni.so" >/dev/null 2>&1 || fail "ONNX Java JNI missing for $expected"
+  unzip -Z1 "$APK" "lib/$expected/libneuro_nnapi_probe.so" >/dev/null 2>&1 || fail "NNAPI driver probe missing for $expected"
   echo "abi_$expected=present"
 done
-if unzip -Z1 "$APK" | grep -E '^assets/.*\.(onnx|gguf|nemo|safetensors)$' >/dev/null; then
+if unzip -Z1 "$APK" | grep -E '^assets/.*\.(onnx|gguf|nemo|safetensors|tflite|litertlm)$' >/dev/null; then
   fail "APK still contains model weights"
 fi
 echo "model_weights_in_apk=none"
 
 # 3. Rebuilt dependency: compare actual bytes to its generated build manifest.
-DEPS_DIR=libs/repo/com/k2fsa/sherpa/onnx/2.0.1-nnapi2
+DEPS_DIR=libs/repo/com/k2fsa/sherpa/onnx/2.0.1-nnapi3
 DEPS_SHA="$(python3 - "$DEPS_DIR" <<'PY'
 import hashlib, json, pathlib, sys
 p = pathlib.Path(sys.argv[1])
 m = json.loads((p / 'build-manifest.json').read_text())
-digest = hashlib.sha256((p / 'onnx-2.0.1-nnapi2.aar').read_bytes()).hexdigest()
+digest = hashlib.sha256((p / 'onnx-2.0.1-nnapi3.aar').read_bytes()).hexdigest()
 assert digest == m['aar_sha256'], 'Rebuilt AAR checksum mismatch'
-assert m['nnapi_cpu_disabled'] and m['arm64_api'] >= 27
+assert m['nnapi_cpu_disabled'] and m['android_api'] >= 27 and set(m['nnapi_abis']) == {'arm64-v8a', 'x86_64'}
 patch_digest = hashlib.sha256(pathlib.Path('scripts/patch-sherpa-gigaam.py').read_bytes()).hexdigest()
 assert patch_digest == m['gigaam_patch_sha256'], 'Rebuild the AAR after changing the GigaAM patch'
 print(digest)
 PY
 )" || fail "NNAPI AAR is missing or differs from its build manifest"
-if [[ ",$ABIS_LIST," == *",arm64-v8a,"* ]]; then
-  unzip -Z1 "$APK" "lib/arm64-v8a/libneuro_nnapi_probe.so" >/dev/null 2>&1 || fail "NNAPI driver probe missing"
-fi
 echo "sherpa_onnx_aar_sha256=$DEPS_SHA"
 
 # 4. Fixture corpus integrity (delivered evaluation corpus must be intact).

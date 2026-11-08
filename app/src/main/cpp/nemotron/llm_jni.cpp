@@ -11,20 +11,14 @@ void fail(JNIEnv* env, const char* message) {
 }
 
 extern "C" JNIEXPORT jlong JNICALL
-Java_dev_neurostenografist_inference_LocalPunctuation_nativeCreate(JNIEnv* env, jobject, jstring path, jboolean gpu, jint threads) {
+Java_dev_neurostenografist_inference_LocalPunctuation_nativeCreate(JNIEnv* env, jobject, jstring path, jint threads) {
     if (!path) { fail(env, "Не указан путь к LLM"); return 0; }
     const char* raw = env->GetStringUTFChars(path, nullptr);
     if (!raw) return 0;
     std::string filename(raw);
     env->ReleaseStringUTFChars(path, raw);
-    try { return reinterpret_cast<jlong>(new neuro::LocalLlm(filename, gpu, threads)); }
+    try { return reinterpret_cast<jlong>(new neuro::LocalLlm(filename, threads)); }
     catch (const std::exception& e) { fail(env, e.what()); return 0; }
-}
-
-extern "C" JNIEXPORT jstring JNICALL
-Java_dev_neurostenografist_inference_LocalPunctuation_nativeBackendReport(JNIEnv* env, jobject, jlong handle) {
-    if (!handle) { fail(env, "LLM уже закрыта"); return nullptr; }
-    return env->NewStringUTF(reinterpret_cast<neuro::LocalLlm*>(handle)->backend_report().c_str());
 }
 
 extern "C" JNIEXPORT jbyteArray JNICALL

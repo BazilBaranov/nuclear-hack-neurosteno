@@ -26,7 +26,9 @@ object OnnxAcceleration {
         preferNnapi: Boolean = true,
         diagnostic: Boolean = false,
     ): OnnxBackend {
-        val devices = if (preferNnapi && Build.VERSION.SDK_INT >= 29) {
+        val api = Build.VERSION.SDK_INT
+        val abi = Build.SUPPORTED_ABIS.firstOrNull().orEmpty()
+        val devices = if (preferNnapi && api in 29..33 && isNnapiAbi(abi)) {
             try {
                 System.loadLibrary("neuro_nnapi_probe")
                 nativeDevices().mapNotNull { line ->
@@ -39,7 +41,7 @@ object OnnxAcceleration {
                 emptyList()
             }
         } else emptyList()
-        val selection = selectOnnxBackend(preferNnapi, Build.VERSION.SDK_INT, Build.SUPPORTED_ABIS.firstOrNull().orEmpty(), devices)
+        val selection = selectOnnxBackend(preferNnapi, api, abi, devices)
         if (!diagnostic) return selection
         require(stage.matches(Regex("[a-zA-Z0-9_-]+"))) { "Некорректное имя этапа профилирования" }
         val directory = File(context.cacheDir, "onnx-profiles/$stage-${UUID.randomUUID()}")
@@ -70,10 +72,14 @@ object OnnxAcceleration {
     }
 }
 
+private fun isNnapiAbi(abi: String): Boolean = abi == "arm64-v8a" || abi == "x86_64"
+
 internal fun selectOnnxBackend(preferNnapi: Boolean, api: Int, abi: String, devices: List<NnapiDevice>): OnnxBackend {
     if (!preferNnapi) return OnnxBackend("cpu", "CPU выбран", false)
-    // Our arm64 AAR is built with NNAPI/API27. Inventory became available in API29.
-    if (api < 29 || abi != "arm64-v8a") return OnnxBackend("cpu", "CPU: NNAPI недоступен для этой сборки или версии Android", false)
+    if (api >= 34) return OnnxBackend("cpu", "ONNX: CPU (Android 14+)", false)
+    // The local AAR supports NNAPI on Android 9. Driver enumeration starts at API 29.
+    if (api < 28 || !isNnapiAbi(abi)) return OnnxBackend("cpu", "CPU: NNAPI недоступен для этой сборки или версии Android", false)
+    if (api == 28) return OnnxBackend("nnapi", "NNAPI запрошен; Android 9 не позволяет проверить драйвер заранее", true)
     val hardware = devices.filter { it.type == 3 || it.type == 4 }
     if (hardware.isEmpty()) return OnnxBackend("cpu", "CPU: аппаратный драйвер NNAPI не обнаружен", false)
     return OnnxBackend("nnapi", "NNAPI запрошен (${hardware.joinToString { it.name }}); CPU для остальных операций", true)

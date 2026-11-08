@@ -24,8 +24,8 @@ import java.io.File
 /** Opt-in real model placement probe. Uses prepared files only; no downloads. */
 @RunWith(AndroidJUnit4::class)
 class OnnxBackendProbeTest {
-    @Test fun gigaamEncoderUsesNnapiOnPixel9Pro() {
-        assumeTrue("Pixel 9 Pro acceleration probe", Build.DEVICE == "caiman")
+    @Test fun gigaamEncoderReportsActualNnapiPlacement() {
+        assumeTrue("NNAPI is used through Android 13", Build.VERSION.SDK_INT <= 33)
         val context = InstrumentationRegistry.getInstrumentation().targetContext
         val models = AppGraph.modelStore(context)
         val id = ModelCatalog.GIGAAM_V3
@@ -40,6 +40,7 @@ class OnnxBackendProbeTest {
             return try { asr.transcribe(samples) } finally { asr.close() }
         }
         try {
+            assumeTrue("No NNAPI driver available", backend.requestedNnapi)
             val reference = transcribe("cpu")
             assertTrue("Need a non-empty CPU transcript", reference.isNotBlank())
             assertEquals(reference, transcribe(backend.provider))

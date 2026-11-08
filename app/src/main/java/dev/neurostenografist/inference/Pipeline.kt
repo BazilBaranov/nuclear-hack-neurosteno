@@ -68,6 +68,7 @@ class Pipeline(
             onProgress(Progress("diarizing", 0f))
             val diarStart = clock()
             val intervals = diarizer.diarize(samples)
+            usedAdditional += diarizer.modelIds
             stageMs["diarization"] = clock() - diarStart
             diarizer.close()
             diarizerClosed = true
@@ -83,6 +84,7 @@ class Pipeline(
                 onProgress(Progress("detecting language", null))
                 val lidStart = clock()
                 val detected = detector.detect(samples)
+                usedAdditional += detector.modelIds
                 lidClosed = true
                 detector.close()
                 stageMs["language"] = clock() - lidStart
@@ -169,6 +171,7 @@ class Pipeline(
                         turn.copy(text = text)
                     }
                 } finally {
+                    usedAdditional += engine.modelIds
                     engine.close()
                 }
             stageMs["asr"] = clock() - asrStart
@@ -182,13 +185,13 @@ class Pipeline(
                 val start = clock()
                 onProgress(Progress("punctuating", 0f))
                 punctuationFactory.invoke().use { punctuation ->
-                    usedAdditional += ModelCatalog.PUNCTUATION
                     finalTurns = finalTurns.mapIndexed { index, turn ->
                         checkCancelled()
                         val text = PunctuationGuard.accept(turn.text, punctuation.punctuate(turn.text, language))
                         onProgress(Progress("punctuating", (index + 1f) / finalTurns.size))
                         turn.copy(text = text)
                     }
+                    usedAdditional += punctuation.modelIds
                     warnings += punctuation.backendReport
                 }
                 stageMs["punctuation"] = clock() - start
@@ -251,6 +254,7 @@ class Pipeline(
 
 /** Local text postprocessor; the pipeline separately enforces word/number preservation. */
 interface TextPunctuator : AutoCloseable {
+    val modelIds: Set<String> get() = setOf(ModelCatalog.PUNCTUATION)
     val backendReport: String
     fun punctuate(text: String, language: String): String
 }

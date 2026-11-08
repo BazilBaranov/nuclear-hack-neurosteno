@@ -1,6 +1,6 @@
 # Nemotron-3-Diarization на Android
 
-`libneuro_nemotron.so` выполняет локальную диаризацию из GGUF. На Pixel 9 Pro приложение запрашивает Vulkan, на остальных устройствах по умолчанию используется CPU. Платформа — Android 9 / API 28+, NDK **28.2.13676358**, ABI arm64-v8a и x86_64.
+`libneuro_nemotron.so` выполняет локальную диаризацию из GGUF. На Android 14+ GGUF через Vulkan служит фолбеком для готового экспорта LiteRT. На Android 9–13 GGUF выполняется на CPU. Платформа — Android 9 / API 28+, NDK **28.2.13676358**, ABI arm64-v8a и x86_64.
 
 Текущий статус проверки на телефонах и измерения находятся в [протоколе проверки](VALIDATION.md). Прежние результаты сборки из [историческом отчёте GitLab](https://gitlab.com/nuclear-it-hack-2026/neurostenografist/-/blob/e6987c4/docs/ULTRA_STATUS.md) относятся к историческому CPU-only порту, NDK 27.2 и другому APK. Они не являются доказательством исполнения текущего runtime.
 

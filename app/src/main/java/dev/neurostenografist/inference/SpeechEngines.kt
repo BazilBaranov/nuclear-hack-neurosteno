@@ -11,6 +11,7 @@ import com.k2fsa.sherpa.onnx.OfflineTransducerModelConfig
 import com.k2fsa.sherpa.onnx.OfflineWhisperModelConfig
 import dev.neurostenografist.audio.AudioDecoder
 import dev.neurostenografist.core.ModelChoice
+import dev.neurostenografist.inference.litert.LiteRtWhisperSession
 import java.io.File
 
 /**
@@ -20,6 +21,7 @@ import java.io.File
  * unsupported speech is still an explicit error, never a silent fallback.
  */
 interface LanguageDetector {
+    val modelIds: Set<String> get() = emptySet()
     fun detect(samples: FloatArray): String?
 
     /** Releases every acquired native resource; idempotent and safe by default. */
@@ -28,6 +30,7 @@ interface LanguageDetector {
 
 /** Transcribes a 16 kHz mono float array; cheap to instantiate per language decision. */
 interface Asr {
+    val modelIds: Set<String> get() = emptySet()
     fun transcribe(samples: FloatArray): String
 
     fun close()
@@ -45,7 +48,11 @@ class WhisperAutoLid(
     provider: String = "cpu",
     onBackendReport: (String) -> Unit = {},
 ) : LanguageDetector {
-    private val recognizer = OnnxSessionFallback(provider, create = { selectedProvider -> SpokenLanguageIdentification(
+    internal var liteRt: LiteRtWhisperSession? = null
+    override val modelIds: Set<String>
+        get() = if (liteRt?.used == true) setOf(ModelCatalog.WHISPER_TINY_LITERT) else emptySet()
+
+    private val cpu = lazy { OnnxSessionFallback(provider, create = { selectedProvider -> SpokenLanguageIdentification(
         null,
         SpokenLanguageIdentificationConfig(
             whisper = SpokenLanguageIdentificationWhisperConfig(
@@ -54,9 +61,9 @@ class WhisperAutoLid(
             ),
             numThreads = HardwareAcceleration.cpuThreads(), provider = selectedProvider,
         ),
-    ) }, release = { it.release() }, onBackendReport = onBackendReport)
+    ) }, release = { it.release() }, onBackendReport = onBackendReport) }
 
-    val backendReport: String get() = recognizer.backendReport
+    val backendReport: String get() = cpu.value.backendReport
 
     override fun detect(samples: FloatArray): String? {
         val windows = speechWindows(samples, WINDOW_SECONDS, MAX_WINDOWS)
@@ -72,7 +79,7 @@ class WhisperAutoLid(
         }
         val votes = HashMap<String, Int>()
         for (window in windows) {
-            val lang = normalize(recognizer.run { it.decidedLanguage(window) })
+            val lang = normalize(liteRt?.run { it.detect(window) } ?: cpu.value.run { it.decidedLanguage(window) })
             votes.merge(lang, 1, Int::plus)
             if (votes[lang]!! >= 2) break
         }
@@ -151,7 +158,11 @@ class WhisperAutoLid(
     override fun close() {
         if (!released) {
             released = true
-            recognizer.close()
+            try {
+                liteRt?.close()
+            } finally {
+                if (cpu.isInitialized()) cpu.value.close()
+            }
         }
     }
 

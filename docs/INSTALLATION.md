@@ -4,7 +4,7 @@
 
 ## Быстрый старт
 
-1. Скачайте [neurosteno-arm64.apk](https://github.com/BazilBaranov/nuclear-hack-neurosteno/releases/download/v0.1.0/neurosteno-arm64.apk).
+1. Скачайте [neurosteno-arm64.apk](https://github.com/BazilBaranov/nuclear-hack-neurosteno/releases/latest/download/neurosteno-arm64.apk).
    Файл хранится в **Releases**, отдельно от исходного кода.
 2. Откройте APK на Android и разрешите установку из выбранного источника.
 3. Откройте «Нейро-стенографист» → меню → **Модели**.
@@ -82,7 +82,7 @@ APK подписан debug-сертификатом сборочной маши�
 Обновление требует совпадения подписи. При конфликте подписи сначала экспортируйте
 нужные результаты: удаление старой установки удалит её приватные модели и данные.
 
-Скачайте [SHA256SUMS.txt](https://github.com/BazilBaranov/nuclear-hack-neurosteno/releases/download/v0.1.0/SHA256SUMS.txt)
+Скачайте [SHA256SUMS.txt](https://github.com/BazilBaranov/nuclear-hack-neurosteno/releases/latest/download/SHA256SUMS.txt)
 в одну папку с APK. Из этой папки выполните проверку:
 
 ```bash

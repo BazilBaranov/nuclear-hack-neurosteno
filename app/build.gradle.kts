@@ -18,8 +18,8 @@ android {
         applicationId = "dev.neurostenografist"
         minSdk = 28
         targetSdk = 35
-        versionCode = 1
-        versionName = "0.1.0"
+        versionCode = 2
+        versionName = "0.2.0"
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         externalNativeBuild {
             cmake { arguments += "-DANDROID_STL=c++_static" }
@@ -47,8 +47,8 @@ android {
                 abiFilters.clear()
                 abiFilters += if (optimizedAbi == "universal") supportedAbis else setOf(optimizedAbi)
             }
-            // Same package/certificate as the installed test app: preserve recordings and weights.
-            applicationIdSuffix = ".ultra"
+            // Side-by-side installation with the differently signed v0.1.0 APK.
+            applicationIdSuffix = ".ultra.v2"
             versionNameSuffix = "-ultra-optimized"
             signingConfig = signingConfigs.getByName("debug")
             isDebuggable = false
@@ -58,9 +58,6 @@ android {
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_17
         targetCompatibility = JavaVersion.VERSION_17
-    }
-    kotlinOptions {
-        jvmTarget = "17"
     }
     buildFeatures {
         compose = true
@@ -83,6 +80,12 @@ android {
     }
 }
 
+kotlin {
+    compilerOptions {
+        jvmTarget.set(org.jetbrains.kotlin.gradle.dsl.JvmTarget.JVM_17)
+    }
+}
+
 dependencies {
     implementation("androidx.core:core-ktx:1.13.1")
     implementation("androidx.activity:activity-compose:1.9.3")
@@ -95,7 +98,9 @@ dependencies {
     implementation("androidx.compose.material3:material3")
     implementation("androidx.compose.material:material-icons-extended")
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.9.0")
-    implementation("com.k2fsa.sherpa:onnx:2.0.1-nnapi2")
+    implementation("com.k2fsa.sherpa:onnx:2.0.1-nnapi3")
+    implementation("com.google.ai.edge.litertlm:litertlm-android:0.16.1")
+    implementation("com.google.ai.edge.litert:litert:2.2.0")
 
     debugImplementation("androidx.compose.ui:ui-tooling")
 

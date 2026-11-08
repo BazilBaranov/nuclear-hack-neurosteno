@@ -4,7 +4,7 @@
 
 <p align="center">
   <strong><a href="https://neurosteno-nuclear-hack.honey-kid-1285.chatgpt.site">Сайт проекта</a></strong> ·
-  <strong><a href="https://github.com/BazilBaranov/nuclear-hack-neurosteno/releases/download/v0.1.0/neurosteno-arm64.apk">Скачать APK</a></strong> ·
+  <strong><a href="https://github.com/BazilBaranov/nuclear-hack-neurosteno/releases/latest/download/neurosteno-arm64.apk">Скачать APK</a></strong> ·
   <strong><a href="artifacts/demo/neurosteno-demo.mp4">Смотреть видео</a></strong> ·
   <a href="docs/INSTALLATION.md">Начать работу</a> ·
   <a href="docs/ARCHITECTURE.md">Архитектура</a> ·
@@ -26,7 +26,7 @@
 
 | **223 / 223** | **3 / 3** | **14,2 с** | **69,4 МБ** |
 |:---:|:---:|:---:|:---:|
-| JVM-тесты прошли | Офлайн RU / EN / тишина | На 15,125 с русской речи | APK без весов моделей |
+| JVM-тесты прошли | Офлайн RU / EN / тишина | На 15,125 с русской речи | APK v0.1.0 без весов моделей |
 
 <sub>Время — один полный проход в debug-инструментации на Honor 200; не оценка точности и не benchmark всех устройств. <a href="docs/TEST_RESULTS.md">Методика и ограничения измерений →</a></sub>
 
@@ -54,7 +54,7 @@
 
 | № | Материал | Где открыть |
 |---|---|---|
-| 1 | **APK приложения** | [neurosteno-arm64.apk](https://github.com/BazilBaranov/nuclear-hack-neurosteno/releases/download/v0.1.0/neurosteno-arm64.apk) · [SHA-256](artifacts/apk/SHA256SUMS.txt) |
+| 1 | **APK приложения** | [neurosteno-arm64.apk](https://github.com/BazilBaranov/nuclear-hack-neurosteno/releases/latest/download/neurosteno-arm64.apk) · [SHA-256](https://github.com/BazilBaranov/nuclear-hack-neurosteno/releases/latest/download/SHA256SUMS.txt) |
 | 2 | **Исходный код** | [Android-модуль](app/) · [Карта исходников](src/mobile/README.md) |
 | 3 | **Установка и использование** | [INSTALLATION.md](docs/INSTALLATION.md) |
 | 4 | **Архитектура и модели** | [ARCHITECTURE.md](docs/ARCHITECTURE.md) · [MODELS.md](docs/MODELS.md) |
@@ -68,7 +68,7 @@
 
 ## Первый запуск
 
-1. [Скачайте APK](https://github.com/BazilBaranov/nuclear-hack-neurosteno/releases/download/v0.1.0/neurosteno-arm64.apk) из **Releases** и установите на ARM64 Android.
+1. [Скачайте APK](https://github.com/BazilBaranov/nuclear-hack-neurosteno/releases/latest/download/neurosteno-arm64.apk) из **Releases** и установите на ARM64 Android.
 2. В меню **Модели** загрузите GigaAM-v3 и Pyannote/TitaNet для русского;
    Whisper base — для английского. Whisper tiny нужен для режима языка «Авто».
 3. Для пунктуации загрузите Qwen 3.5 и включите соответствующий пункт.
@@ -99,9 +99,8 @@ flowchart LR
 
 - **Honor 200:** работает полный CPU-проход; русский GigaAM, английский Whisper,
   локальная LLM, диаризация, шумоподавление и VoxLock реально исполнялись офлайн.
-- **GPU/NPU на Honor:** Vulkan отказал, NNAPI-драйвер не обнаружен. Qwen и Nemotron
-  по умолчанию используют CPU. Наличие Adreno не выдаётся за аппаратное ускорение.
-- **Pixel 9 Pro:** сохранён ранее проверенный владельцем путь; при переносе повторно не тестировался.
+- **Аппаратное исполнение v0.2:** Android 14+ использует дополнительные пакеты LiteRT,
+  Android 9–13 запрашивает NNAPI для совместимых ONNX-моделей. [Бэкенды и фолбеки](docs/acceleration.md).
 - **Качество:** WER/DER на независимом корпусе не измерены. Метки дикторов и спорные
   реплики требуют проверки; успешные технические тесты не гарантируют точность.
 

@@ -23,6 +23,7 @@ fun createDiarizer(
 
 /** Global speaker diarization over 16 kHz mono samples. */
 interface Diarizer {
+    val modelIds: Set<String> get() = emptySet()
     fun diarize(samples: FloatArray): List<SpeakerInterval>
 
     /** Releases every acquired native resource; idempotent and safe by default. */

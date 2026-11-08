@@ -2,6 +2,7 @@
 
 package dev.neurostenografist.ui
 
+import android.os.Build
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -27,6 +28,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.unit.dp
+import dev.neurostenografist.inference.BundleKind
 import dev.neurostenografist.inference.ModelCatalog
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
@@ -44,6 +46,9 @@ fun ModelsScreen(
     onBack: () -> Unit,
 ) {
     val modelStore = vm.modelStore
+    val bundles = ModelCatalog.selectableBundles.filter {
+        it.kind != BundleKind.ACCELERATION || Build.VERSION.SDK_INT >= 34
+    }
 
     // Disk state per bundle on the IO dispatcher: ready / partial leftovers / absent.
     // Kept as mutableStateOf + LaunchedEffect instead of produceState: the compose
@@ -55,7 +60,7 @@ fun ModelsScreen(
     LaunchedEffect(state.readyBundles) {
         diskStates.value =
             withContext(Dispatchers.IO) {
-                ModelCatalog.selectableBundles.associate { bundle ->
+                bundles.associate { bundle ->
                     bundle.id to
                         when {
                             modelStore.isReady(bundle.id) -> "ready"
@@ -98,7 +103,7 @@ fun ModelsScreen(
                     Text("Подготовка ${bundleName(id)}…")
                 }
             }
-            ModelCatalog.selectableBundles.forEach { bundle ->
+            bundles.forEach { bundle ->
                 val ready = bundle.id in state.readyBundles
                 val preparing = state.installing == bundle.id
                 val incomplete = diskStates.value[bundle.id] == "incomplete"
@@ -111,6 +116,10 @@ fun ModelsScreen(
                         )}",
                         style = MaterialTheme.typography.bodySmall,
                     )
+                    if (bundle.kind == BundleKind.ACCELERATION) {
+                        Text("Дополнительные веса для Android 14+. Установите также основную модель для CPU-фолбека.",
+                            style = MaterialTheme.typography.bodySmall)
+                    }
                     when {
                         preparing -> {
                             val fraction = state.downloadFraction

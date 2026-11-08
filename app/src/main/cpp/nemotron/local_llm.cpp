@@ -2,8 +2,8 @@
 #include "llama.h"
 #include "ggml-backend.h"
 #include <algorithm>
-#include <cstdlib>
 #include <cstdio>
+#include <cstdlib>
 #include <mutex>
 #include <stdexcept>
 #include <string_view>
@@ -12,20 +12,17 @@ namespace neuro {
 void initialize_backends() {
     static std::once_flag initialized;
     std::call_once(initialized, [] {
-        // Nemotron's recurrent cache is incompatible with Vulkan graph optimization.
-        setenv("GGML_VK_DISABLE_GRAPH_OPTIMIZE", "1", 0);
         // Avoid verbose per-node diagnostics on a phone during every decode.
         auto log = [](ggml_log_level level, const char* text, void*) {
             if (level != GGML_LOG_LEVEL_DEBUG) std::fputs(text, stderr);
         };
         llama_log_set(log, nullptr);
         ggml_log_set(log, nullptr);
+        setenv("GGML_VK_DISABLE_GRAPH_OPTIMIZE", "1", 0);
         try {
             llama_backend_init();
             ggml_backend_load_all();
         } catch (const std::exception&) {
-            // A throwing Vulkan inventory must not make the CPU path unusable.
-            // The pinned ggml registry explicitly honors this switch.
             setenv("GGML_DISABLE_VULKAN", "1", 1);
             llama_backend_init();
             ggml_backend_load_all();
@@ -43,52 +40,28 @@ std::vector<std::string> devices() {
     return out;
 }
 
-LocalLlm::LocalLlm(const std::string& path, bool prefer_gpu, int threads) {
+LocalLlm::LocalLlm(const std::string& path, int threads) {
     initialize_backends();
-    ggml_backend_dev_t gpu = nullptr;
-    if (prefer_gpu) {
-        for (size_t i = 0; i < ggml_backend_dev_count(); ++i) {
-            auto device = ggml_backend_dev_get(i);
-            const auto type = ggml_backend_dev_type(device);
-            if (type == GGML_BACKEND_DEVICE_TYPE_GPU || type == GGML_BACKEND_DEVICE_TYPE_IGPU) {
-                gpu = device;
-                break;
-            }
-        }
-    }
-    // Keep partially loaded models/contexts owned until construction succeeds.
-    // A Vulkan driver may throw during initialization, not merely return null.
-    const auto load = [&](bool use_gpu) {
-        ggml_backend_dev_t selected[] = {use_gpu ? gpu : nullptr, nullptr};
-        auto params = llama_model_default_params();
-        params.n_gpu_layers = use_gpu ? 99 : 0;
-        params.devices = selected;
-        std::unique_ptr<llama_model, decltype(&llama_model_free)> model(
-            llama_model_load_from_file(path.c_str(), params), llama_model_free);
-        if (!model) throw std::runtime_error("Не удалось загрузить GGUF-модель пунктуации");
-        auto ctx = llama_context_default_params();
-        ctx.n_ctx = 2048;
-        ctx.n_batch = 128;
-        ctx.n_ubatch = 128;
-        ctx.n_threads = std::clamp(threads, 1, 4);
-        ctx.n_threads_batch = ctx.n_threads;
-        ctx.no_perf = true;
-        ctx.offload_kqv = use_gpu;
-        ctx.op_offload = use_gpu;
-        std::unique_ptr<llama_context, decltype(&llama_free)> context(llama_init_from_model(model.get(), ctx), llama_free);
-        if (!context) throw std::runtime_error("Недостаточно памяти для контекста локальной LLM");
-        model_ = model.release();
-        context_ = context.release();
-    };
-    std::string failure;
-    if (gpu) {
-        try { load(true); }
-        catch (const std::exception& error) { failure = error.what(); }
-    }
-    if (!model_) load(false);
-    report_ = gpu && failure.empty() ? std::string("GPU ") + ggml_backend_dev_name(gpu) + " + CPU" : "CPU";
-    if (prefer_gpu && !gpu) report_ += "; GPU недоступен в этой сборке или на устройстве";
-    if (!failure.empty()) report_ += "; загрузка GPU не удалась: " + failure;
+    auto params = llama_model_default_params();
+    ggml_backend_dev_t cpu_only[] = {nullptr};
+    params.devices = cpu_only;
+    params.n_gpu_layers = 0;
+    std::unique_ptr<llama_model, decltype(&llama_model_free)> model(
+        llama_model_load_from_file(path.c_str(), params), llama_model_free);
+    if (!model) throw std::runtime_error("Не удалось загрузить GGUF-модель пунктуации");
+    auto ctx = llama_context_default_params();
+    ctx.n_ctx = 2048;
+    ctx.n_batch = 128;
+    ctx.n_ubatch = 128;
+    ctx.n_threads = std::clamp(threads, 1, 4);
+    ctx.n_threads_batch = ctx.n_threads;
+    ctx.no_perf = true;
+    ctx.offload_kqv = false;
+    ctx.op_offload = false;
+    std::unique_ptr<llama_context, decltype(&llama_free)> context(llama_init_from_model(model.get(), ctx), llama_free);
+    if (!context) throw std::runtime_error("Недостаточно памяти для контекста локальной LLM");
+    model_ = model.release();
+    context_ = context.release();
 }
 
 LocalLlm::~LocalLlm() {
